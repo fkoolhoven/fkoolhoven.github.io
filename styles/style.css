@@ -1,0 +1,14 @@
+header{
+	background-color: blue;
+	height: 50px;
+}
+
+body{
+	margin:0%
+}
+
+footer{
+	height: 20px;
+	background-color: aqua;
+	font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
