@@ -1,33 +1,3 @@
-// // VARIABLES
-// const	canvas = document.getElementById("MyCanvas");
-// const	context = canvas.getContext("2d");
-// const	centerX = canvas.width / 2;
-// const	centerY = canvas.height / 2;
-// const	maxRadius = 70;
-// const	animationSpeed = 1;
-// let 	radius = 0;
-
-// // ANIMATION
-// function drawCircle() 
-// {
-// 	context.clearRect(0, 0, canvas.width, canvas.height);
-// 	context.beginPath();
-// 	context.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-// 	context.lineWidth = 1;
-// 	context.strokeStyle = '#FF0000';
-// 	context.stroke();
-// }
-
-// function animateCircle() 
-// {
-// 	if (radius < maxRadius) 
-// 	{
-// 		radius += animationSpeed;
-// 		drawCircle();
-// 		requestAnimationFrame(animateCircle);
-// 	}
-// }
-
 // EVENT LISTENER
 document.body.addEventListener("keydown", (ev) => 
 {
@@ -36,55 +6,76 @@ document.body.addEventListener("keydown", (ev) =>
 		console.log("great work you pressed A");
 		let audio = new Audio("audio/a.wav");
 		audio.play();
-		animateCircle();
+		noiseSeed(random(0, 10));
 	}
 });
 
+// GLOBAL VARIABLES
 let		particles = [];
-const	num = 3000;
-const	noiseScale = 0.01/2;
+const	number_of_particles = 3000;
+const	noiseScale = 0.007;
+let		speed = 1.2;
+let		color1;
+let		color2;
+let		color3;
+let		color4;
 
-function setup() 
+// CODE FOR FLOW FIELD VISUALS
+function setup()
 {
-	const canvas = createCanvas(window.innerWidth, window.innerHeight - 100);
-	canvas.parent("container_test");
-	for(let i = 0; i < num; i ++) 
-	{
-		particles.push(createVector(random(width), random(height)));
-	}
+	const canvas = createCanvas(window.innerWidth, window.innerHeight);
 
-	stroke(255);
-	// For a cool effect try uncommenting this line
-	// And comment out the background() line in draw
-	// stroke(255, 50);
+	canvas.parent("container_test");
+	for(let i = 0; i < number_of_particles; i++) 
+		particles.push(createVector(random(width), random(height)));
+	strokeWeight(1);
+	color1 = 255;
+	color2 = color(173, 255, 47);
+	color3 = color(248, 51, 60); 
+	color4 = color(43, 158, 179);
 	clear();
 }
 
-function draw() 
+function get_color(i)
+{
+	if (i % 5 == 0)
+		return (color1);
+	else if (i % 3 == 0)
+		return (color2);
+	else if (i % 2 == 0)
+		return (color3);
+	else
+		return (color4);
+}
+
+function draw()
 {
 	background(0, 10);
-	for(let i = 0; i < num; i ++) 
+	for(let i = 0; i < number_of_particles; i++) 
 	{
-		let p = particles[i];
-		point(p.x, p.y);
-		let n = noise(p.x * noiseScale, p.y * noiseScale, frameCount * noiseScale * noiseScale);
-		let a = TAU * n;
-		p.x += cos(a);
-		p.y += sin(a);
-		if(!onScreen(p)) 
+		stroke(get_color(i));
+		let particle = particles[i];
+		point(particle.x, particle.y);
+		let noise_value = noise(particle.x * noiseScale, particle.y * noiseScale, frameCount * noiseScale * noiseScale);
+		let angle = TAU * noise_value;
+		particle.x += cos(angle) * speed;
+		particle.y += sin(angle) * speed;
+		if(!particle_is_on_screen(particle)) 
 		{
-			p.x = random(width);
-			p.y = random(height);
+			particle.x = random(width);
+			particle.y = random(height);
 		}
 	}
 }
 
 function mouseReleased() 
 {
-	noiseSeed(millis());
+	noiseSeed(random(0, 10));
 }
 
-function onScreen(v)
+function particle_is_on_screen(particle)
 {
-	return v.x >= 0 && v.x <= width && v.y >= 0 && v.y <= height;
+	if (particle.x >= 0 && particle.x <= width && particle.y >= 0 && particle.y <= height)
+		return (true);
+	return (false);
 }
