@@ -54,10 +54,23 @@ button{
 	border-style: none;
 }
 
-button:hover{
+.contact-button:hover{
 	background-color: aliceblue;
 	padding: 20px 30px;
 }
+
+.nav-button{
+	width: 250px;
+	font-size: large;
+}
+.nav-button:hover{
+	background-color: aliceblue;
+}
+
+/* button:hover{
+	background-color: aliceblue;
+	padding: 20px 30px;
+} */
 
 .contact-link{
 	color: black;
@@ -66,3 +79,25 @@ button:hover{
 	
 }
 
+#github-logo{
+	width: 100px;
+	padding-bottom: 50px;
+}
+
+#MenuLabel{
+	font-weight: lighter;
+}
+
+.offcanvas-header{
+	background-color:white;
+	color: black;
+}
+
+#menu-button:hover{
+	background-color: rgb(188, 251, 61);
+	padding: 2px;
+}
+
+.button-text{
+	font-weight: lighter;
+}
