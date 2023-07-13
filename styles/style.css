@@ -5,6 +5,10 @@
 } */
 
 body{
+	height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 	margin:0%;
 	background-color: black;
 	font-weight:lighter;
@@ -21,7 +25,7 @@ body{
 
 #menu-button{
 	position: absolute;
-    top: 10px;
+    top: 15px;
     left: 10px;
     z-index: 1;
 	background-color: white;
@@ -38,5 +42,27 @@ body{
 #Menu
 {
 	width: 300px;
+}
+
+.page-links{
+	color:rgb(173, 255, 47) !important;
+}
+
+button{
+	background-color: rgb(188, 251, 61);
+	padding: 20px;
+	border-style: none;
+}
+
+button:hover{
+	background-color: aliceblue;
+	padding: 20px 30px;
+}
+
+.contact-link{
+	color: black;
+	text-decoration: none;
+	font-weight: lighter;
+	
 }
 

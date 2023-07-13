@@ -25,7 +25,7 @@ function setup()
 {
 	const canvas = createCanvas(window.innerWidth, window.innerHeight);
 
-	canvas.parent("container_test");
+	canvas.parent("canvas_location");
 	for(let i = 0; i < number_of_particles; i++) 
 		particles.push(createVector(random(width), random(height)));
 	strokeWeight(1);
