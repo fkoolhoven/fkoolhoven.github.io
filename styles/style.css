@@ -54,9 +54,12 @@ button{
 	border-style: none;
 }
 
+.contact-button{
+	width: 220px;
+}
+
 .contact-button:hover{
 	background-color: aliceblue;
-	padding: 20px 30px;
 }
 
 .nav-button{
