@@ -40,6 +40,9 @@ let		h_pressed = false;
 let		j_pressed = false;
 let		k_pressed = false;
 let		l_pressed = false;
+let		w_pressed = false;
+let		strokeWeightDefault = 1;
+let		strokeWeightEffect = 1;
 
 // CODE FOR FLOW FIELD VISUALS
 function setup()
@@ -49,7 +52,7 @@ function setup()
 	canvas.parent("canvas_location");
 	for(let i = 0; i < number_of_particles; i++) 
 		particles.push(createVector(random(width), random(height)));
-	strokeWeight(1);
+	strokeWeight(strokeWeightDefault);
 	color1 = 255;
 	color2 = color(173, 255, 47);
 	color3 = color(248, 51, 60); 
@@ -84,6 +87,10 @@ function draw()
 			stroke(color3);
 		else if (l_pressed)
 			stroke(color4);
+		if (w_pressed)
+			strokeWeight(strokeWeightEffect);
+		else
+			strokeWeight(strokeWeightDefault);
 		let particle = particles[i];
 		point(particle.x, particle.y);
 		let noise_value = noise(particle.x * noiseScale, particle.y * noiseScale, frameCount * noiseScale * noiseScale);
@@ -105,7 +112,8 @@ function particle_is_on_screen(particle)
 	return (false);
 }
 
-let previousTimeout;
+let previousSpeedTimeout;
+let	previousStrokeTimeout
 let effectDuration = 3000;
 function keyPressed() 
 {
@@ -162,40 +170,45 @@ function keyPressed()
 		revertSpeed();
 		speed = 2;
 		h_pressed = true;
-		clearTimeout(previousTimeout);
-		previousTimeout = setTimeout(revertSpeed, effectDuration);
+		clearTimeout(previousSpeedTimeout);
+		previousSpeedTimeout = setTimeout(revertSpeed, effectDuration);
 	}
 	if (key === 'j') 
 	{
 		revertSpeed();
 		speed = 2;
 		j_pressed = true;
-		clearTimeout(previousTimeout);
-		previousTimeout = setTimeout(revertSpeed, effectDuration);
+		clearTimeout(previousSpeedTimeout);
+		previousSpeedTimeout = setTimeout(revertSpeed, effectDuration);
 	}
 	if (key === 'k') 
 	{
 		revertSpeed();
 		speed = 2;
 		k_pressed = true;
-		clearTimeout(previousTimeout);
-		previousTimeout = setTimeout(revertSpeed, effectDuration);
+		clearTimeout(previousSpeedTimeout);
+		previousSpeedTimeout = setTimeout(revertSpeed, effectDuration);
 	}
 	if (key === 'l') 
 	{
 		revertSpeed();
 		speed = 2;
 		l_pressed = true;
-		clearTimeout(previousTimeout);
-		previousTimeout = setTimeout(revertSpeed, effectDuration);
+		clearTimeout(previousSpeedTimeout);
+		previousSpeedTimeout = setTimeout(revertSpeed, effectDuration);
 	}
 	if (key === 'q') 
 	{
-	//   background(color4);
+		glitches(40);
+		
 	}
 	if (key === 'w') 
 	{
-	//   background(color4);
+		if (!w_pressed)
+		{
+			w_pressed = true;
+			strokeGrow(40);
+		}
 	}
 	if (key === 'e') 
 	{
@@ -231,6 +244,33 @@ function keyPressed()
 	}
 }
 
+function	glitches(number)
+{
+	if (number > 0)
+	{
+		noiseSeed(random(0, 10));
+		setTimeout(() => glitches(number - 1), 30);
+	}
+}
+
+function	strokeGrow(number)
+{
+	if (number > 20)
+	{
+		strokeWeightEffect += 0.5;
+		console.log("number = ", number);
+		setTimeout(() => strokeGrow(number - 1), 30);
+	}
+	else if (number > 0)
+	{
+		strokeWeightEffect -= 0.5;
+		console.log("number = ", number);
+		setTimeout(() => strokeGrow(number - 1), 30);
+	}
+	else if (number == 0)
+		revertW();
+}
+
 function	revertSpeed()
 {
 	if (speed == 2)
@@ -240,4 +280,10 @@ function	revertSpeed()
 	k_pressed = false;
 	l_pressed = false;
 	
+}
+
+function	revertW()
+{
+	w_pressed = false;
+	strokeWeightEffect = strokeWeightDefault;
 }
