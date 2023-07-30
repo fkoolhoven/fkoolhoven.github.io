@@ -30,17 +30,27 @@
 // GLOBAL VARIABLES
 let		particles = [];
 const	number_of_particles = 3000;
-const	noiseScale = 0.007;
-let		speed = 1.2;
+let		noiseScale;
+let		noiseScaleDefault = 0.007;
+let		noiseScaleEffect = 0.0009;
+let 	direction;
+let		directionEffect = 4;
+let		speed;
+let		speedDefault = 1.2;
+let		speedEffect = 2;
 let		color1;
 let		color2;
 let		color3;
 let		color4;
+
 let		h_pressed = false;
 let		j_pressed = false;
 let		k_pressed = false;
 let		l_pressed = false;
 let		w_pressed = false;
+let		e_pressed = false;
+let		r_pressed = false;
+
 let		strokeWeightDefault = 1;
 let		strokeWeightEffect = 1;
 
@@ -57,6 +67,7 @@ function setup()
 	color2 = color(173, 255, 47);
 	color3 = color(248, 51, 60); 
 	color4 = color(43, 158, 179);
+	speed = speedDefault;
 	clear();
 }
 
@@ -77,7 +88,7 @@ function draw()
 	background(0, 10);
 	for(let i = 0; i < number_of_particles; i++) 
 	{
-		if (speed != 2)
+		if (speed == speedDefault)
 			stroke(get_color(i));
 		else if (h_pressed)
 			stroke(color1);
@@ -93,10 +104,20 @@ function draw()
 			strokeWeight(strokeWeightDefault);
 		let particle = particles[i];
 		point(particle.x, particle.y);
+
+		if (r_pressed)
+			noiseScale = noiseScaleEffect;
+		else
+			noiseScale = noiseScaleDefault;
+
 		let noise_value = noise(particle.x * noiseScale, particle.y * noiseScale, frameCount * noiseScale * noiseScale);
-		let angle = TAU * noise_value;
-		particle.x += cos(angle) * speed;
-		particle.y += sin(angle) * speed;
+		if (e_pressed)
+			direction = directionEffect;
+		else
+			direction = TAU * noise_value;
+		particle.x += cos(direction) * speed;
+		particle.y += sin(direction) * speed;
+
 		if(!particle_is_on_screen(particle)) 
 		{
 			particle.x = random(width);
@@ -168,7 +189,7 @@ function keyPressed()
 	if (key === 'h') 
 	{
 		revertSpeed();
-		speed = 2;
+		speed = speedEffect;
 		h_pressed = true;
 		clearTimeout(previousSpeedTimeout);
 		previousSpeedTimeout = setTimeout(revertSpeed, effectDuration);
@@ -176,7 +197,7 @@ function keyPressed()
 	if (key === 'j') 
 	{
 		revertSpeed();
-		speed = 2;
+		speed = speedEffect;
 		j_pressed = true;
 		clearTimeout(previousSpeedTimeout);
 		previousSpeedTimeout = setTimeout(revertSpeed, effectDuration);
@@ -184,7 +205,7 @@ function keyPressed()
 	if (key === 'k') 
 	{
 		revertSpeed();
-		speed = 2;
+		speed = speedEffect;
 		k_pressed = true;
 		clearTimeout(previousSpeedTimeout);
 		previousSpeedTimeout = setTimeout(revertSpeed, effectDuration);
@@ -192,7 +213,7 @@ function keyPressed()
 	if (key === 'l') 
 	{
 		revertSpeed();
-		speed = 2;
+		speed = speedEffect;
 		l_pressed = true;
 		clearTimeout(previousSpeedTimeout);
 		previousSpeedTimeout = setTimeout(revertSpeed, effectDuration);
@@ -212,11 +233,19 @@ function keyPressed()
 	}
 	if (key === 'e') 
 	{
-	//   background(color4);
+		if (!e_pressed)
+		{
+			e_pressed = true;
+			setTimeout(revertDirection, effectDuration);
+		}		
 	}
 	if (key === 'r') 
 	{
-	//   background(color4);
+		if (!r_pressed)
+		{
+			r_pressed = true;
+			setTimeout(revertNoiseScale, effectDuration * 3);
+		}
 	}
 	if (key === 't') 
 	{
@@ -273,8 +302,8 @@ function	strokeGrow(number)
 
 function	revertSpeed()
 {
-	if (speed == 2)
-		speed = 1.2;
+	if (speed == speedEffect)
+		speed = speedDefault;
 	h_pressed = false;
 	j_pressed = false;
 	k_pressed = false;
@@ -286,4 +315,14 @@ function	revertW()
 {
 	w_pressed = false;
 	strokeWeightEffect = strokeWeightDefault;
+}
+
+function	revertDirection()
+{
+	e_pressed = false;
+}
+
+function	revertNoiseScale()
+{
+	r_pressed = false;
 }
