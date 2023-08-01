@@ -5,7 +5,8 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>soundkey</title>
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 	<link rel="stylesheet" href="../styles/style.css">
 </head>
 
@@ -15,28 +16,84 @@
 	</button>
 
 	<div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="Menu" aria-labelledby="MenuLabel">
-	  	<div class="offcanvas-body">
-	   		<div>
-				<ul id="page-links">
-					<li> <a class="page-links" id="home" href="../index.html">Home</a></li>
-					<li> <a class="page-links" id="contact" href="contact.html">Contact</a></li>
-				</ul>
-	    		Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
-	    	</div>
-	    	<div class="dropdown mt-3">
-	     		<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-	       			Dropdown button
-	      		</button>
-	      			<ul class="dropdown-menu">
-	        			<li><a class="dropdown-item" href="#">Action</a></li>
-	        			<li><a class="dropdown-item" href="#">Another action</a></li>
-	        			<li><a class="dropdown-item" href="#">Something else here</a></li>
-	      			</ul>
-	    	</div>
-	  	</div>
-	</div>
+		<div class="offcanvas-body d-flex flex-column">
+		  <div class="text-center">
+			  <a href="../index.html">
+				  <button class="nav-button button-text">
+						HOME&nbsp&nbsp
+					  <i class="fa fa-long-arrow-right"></i>
+				  </button>
+			  </a>
+			  <br><br>
+			  <a href="contact.html">
+				  <button class="nav-button button-text">
+						CONTACT&nbsp&nbsp
+					  <i class="fa fa-long-arrow-right"></i>
+				  </button>
+			  </a>
+			  <br><br>
+		  </div>
+		  <div class="mt-auto">
+			  <p>
+				  Soundkey was made by Felicia Koolhoven. View the code on GitHub:<br><br>
+			  </p>
+			  <div class="text-center">
+				  <a href="https://github.com/fkoolhoven/soundkey" target="_blank">
+					  <img id="github-logo" src="../img/github-mark-white.png" class="img-fluid rounded" alt="GitHub logo">
+				  </a>
+			  </div>
+		  </div>
+		</div>
+  	</div>
 
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
-	
-</body>
+	<div id="wrappie" class="text">
+
+		<div id="tutorial">
+			<h4>Introduction</h4>
+			<p>
+				When I started this project I had almost no knowledge of fronted web development. I had just started a course with Code First Girls and learned the basics of HTML, CSS and JavaScript (which I highly recommend). During the course we were encouraged to work on a personal project to get some practice in and to show that we had been paying attention and were deserving of the course certificate. So, although I had some guidance throughout this course I believe that anyone with some basic programming skills will be able to pull off this project.
+				<br><br>I wrote this tutorial for anyone who might want to recreate this project and also for myself as writing this tutorial was a nice way to track my progress. If you, like I did, have no previous knowledge of frontend web dev, you’ll be figuring a lot of things out along the way. Stick with it and don’t lose sight of the goal: to have some fun and learn a few things along the way.
+				<br><br>DISCLAIMER: I am a beginner myself so by no means a pro. This is also not a step by step tutorial; my goal is to give you some you some pointers on how to go about this project.
+			</p>
+			<br>
+			
+			<h4>The basics: HTML and CSS</h4>
+			<p>
+				HTML, which stands for "HyperText Markup Language," is the foundation of every webpage you see on the internet. It's like the blueprint or skeleton of a webpage. Think of HTML as a set of instructions that tells your web browser how to display the content on a webpage. These instructions are made up of special codes called "tags." Each tag serves a specific purpose and tells the browser how to format and present different elements, such as headings, paragraphs, images, links, and more. 
+				<br><br>For example, if you want to display a heading on your webpage, you use the &lt;h1&gt; tag. If you want to add a paragraph of text, you use the &lt;p&gt; tag. And if you want to include an image, you use the &lt;img&gt; tag.
+				<br><br>CSS stands for "Cascading Style Sheets”. While HTML takes care of the structure and layout, CSS adds colors, fonts, and beautiful designs to make the webpage look visually appealing. In simpler terms, you can think of CSS as the stylist of a webpage. It helps you change the appearance of different elements on the page, such as the color of text, the size of headings, the background color of sections, and more. 
+				<br><br>CSS works by selecting HTML elements using special rules, and then you can specify how those elements should be styled. For example, you can use CSS to make all the headings on your page appear in a particular font, or you can change the background color of buttons when someone hovers over them.
+			</p>
+			<br>
+			<p>
+				As an example, let’s take the tutorial button you pressed on to get to this page. The HTML tag &lt;button&gt; creates a button on the page. To add some flair, I’ve changed the background color to a shade of green, chose a font and made the button change color when you hover over it through CSS.
+				IMG
+				Follow this link to have a look at my HTML index file (home page).
+				Follow this link to have a look at my HTML file for the contact page.
+				Follow this link to have a look at my HTML file for the tutorial page.
+				Follow this link to have a look at my CSS file for this project.
+			</p>
+			<br>
+			
+			<h4>Creating a flow field</h4>
+			<p>
+				To create the flow field I used a library called p5.js, a JavaScipt library that will make your life as a creative coder a lot easier. I started out by coding along to this video(https://www.youtube.com/watch?v=sZBfLgfsvSk). It teaches you an easy way to create a basic flow field using Perlin Noise. You can either start out my using the p5.js online editor https://editor.p5js.org/ or start by creating a JavaScipt file in your project directory. Link your JavaScript file to your HTML file using the &lt;script&gt; tag. For example:
+				IMG
+				<br><br>The p5js website does a good job at explaining how set it up: https://p5js.org/get-started/ Definitely look into the concepts of Perlin noise and vectors. I found this (https://www.youtube.com/watch?v=bKEaK7WNLzM&t=720s) video on vectors very insightful.
+			</p>
+			<br>	
+			
+			<h4>Adding effects</h4>
+			<p>	
+			</p>
+
+
+
+			
+		</div>
+	</div>
+		
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+		
+	</body>
 </html>

@@ -4,16 +4,23 @@
 	height: 50px;
 } */
 
-body{
-	height: 100vh;
-    display: flex;
+#contact-body{
+	display: flex;
     justify-content: center;
     align-items: center;
+}
+
+body{
+	height: 100vh;
 	margin:0%;
 	background-color: black;
 	font-weight:lighter;
 	font-family: Helvetica !important;
 	color: greenyellow !important;
+}
+
+p{
+	display: block;
 }
 
 /* footer{
@@ -24,7 +31,7 @@ body{
 } */
 
 #menu-button{
-	position: absolute;
+	position: fixed;
     top: 15px;
     left: 10px;
     z-index: 1;
@@ -54,19 +61,19 @@ button{
 	border-style: none;
 }
 
-.contact-button{
-	width: 220px;
-}
-
-.contact-button:hover{
-	background-color: aliceblue;
-}
-
 .nav-button{
 	width: 250px;
 	font-size: large;
 }
 .nav-button:hover{
+	background-color: aliceblue;
+}
+
+.contact-button{
+	width: 220px;
+}
+
+.contact-button:hover{
 	background-color: aliceblue;
 }
 
@@ -99,6 +106,20 @@ button{
 #menu-button:hover{
 	background-color: rgb(188, 251, 61);
 	padding: 2px;
+}
+
+#tutorial{
+	max-width: 50%;
+	justify-content:center;
+	min-width: 300px;
+}
+
+#wrappie{
+	display: flex;
+    justify-content: center;
+    /* align-items: center; */
+	padding-top: 100px;
+	padding-bottom: 50px;
 }
 
 .button-text{
