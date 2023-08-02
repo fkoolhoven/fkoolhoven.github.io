@@ -50,6 +50,7 @@ let		l_pressed = false;
 let		w_pressed = false;
 let		e_pressed = false;
 let		r_pressed = false;
+let		p_pressed = false;
 
 let		strokeWeightDefault = 1;
 let		strokeWeightEffect = 1;
@@ -85,45 +86,93 @@ function get_color(i)
 
 function draw()
 {
-	background(0, 10);
-	for(let i = 0; i < number_of_particles; i++) 
-	{
-		if (speed == speedDefault)
-			stroke(get_color(i));
-		else if (h_pressed)
-			stroke(color1);
-		else if (j_pressed)
-			stroke(color2);
-		else if (k_pressed)
-			stroke(color3);
-		else if (l_pressed)
-			stroke(color4);
-		if (w_pressed)
-			strokeWeight(strokeWeightEffect);
-		else
-			strokeWeight(strokeWeightDefault);
-		let particle = particles[i];
-		point(particle.x, particle.y);
+	// if (p_pressed)
+	// {
+	// 	background(0, 10);
+	  
+	// 	let center = createVector(width / 2, height / 2); // Center of the screen
+	  
+	// 	for (let i = 0; i < num; i++) {
+	// 	  let p = particles[i];
+	// 	  point(p.x, p.y);
+	  
+	// 	  // Calculate the direction vector away from the center
+	// 	  let direction = p5.Vector.sub(p, center).normalize();
+	  
+	// 	  // Move the particle away from the center in the direction vector
+	// 	  p.add(direction);
+	  
+	// 	  // If the particle goes off-screen, reset its position to a random location
+	// 	  if (!onScreen(p)) {
+	// 		p.x = random(width);
+	// 		p.y = random(height);
+	// 	  }
+	// 	}
+	// }
 
-		if (r_pressed)
-			noiseScale = noiseScaleEffect;
-		else
-			noiseScale = noiseScaleDefault;
 
-		let noise_value = noise(particle.x * noiseScale, particle.y * noiseScale, frameCount * noiseScale * noiseScale);
-		if (e_pressed)
-			direction = directionEffect;
-		else
-			direction = TAU * noise_value;
-		particle.x += cos(direction) * speed;
-		particle.y += sin(direction) * speed;
 
-		if(!particle_is_on_screen(particle)) 
+	// else
+	// {
+		if (p_pressed)
+			background(0, 5); // why background changes back immediately
+		else
 		{
-			particle.x = random(width);
-			particle.y = random(height);
+			background(0, 10);
 		}
-	}
+		for(let i = 0; i < number_of_particles; i++) 
+		{
+			if (speed == speedDefault)
+				stroke(get_color(i));
+			else if (h_pressed)
+				stroke(color1);
+			else if (j_pressed)
+				stroke(color2);
+			else if (k_pressed)
+				stroke(color3);
+			else if (l_pressed)
+				stroke(color4);
+			if (w_pressed)
+				strokeWeight(strokeWeightEffect);
+			else
+				strokeWeight(strokeWeightDefault);
+			let particle = particles[i];
+			point(particle.x, particle.y);
+
+			if (r_pressed)
+				noiseScale = noiseScaleEffect;
+			else
+				noiseScale = noiseScaleDefault;
+
+			let noise_value = noise(particle.x * noiseScale, particle.y * noiseScale, frameCount * noiseScale * noiseScale);
+			if (e_pressed)
+				direction = directionEffect;
+			else if (p_pressed)
+			{
+				let center = createVector(width / 2, height / 2);
+				direction = p5.Vector.sub(particle, center).normalize();
+				particle.add(p5.Vector.mult(direction, speed));
+			}
+			else
+				direction = TAU * noise_value;
+
+			if (!p_pressed)
+			{
+				particle.x += cos(direction) * speed;
+				particle.y += sin(direction) * speed;
+			}
+			if(!particle_is_on_screen(particle)) 
+			{
+				particle.x = random(width);
+				particle.y = random(height);
+			}
+		}
+	// }
+
+
+
+
+	
 }
 
 function particle_is_on_screen(particle)
@@ -273,9 +322,10 @@ function keyPressed()
 	{
 	//   background(color4);
 	}
-	if (key === 'p') 
+	if (key === 'p' && !p_pressed) 
 	{
-	//   background(color4);
+		p_pressed = true;
+		setTimeout(revertP, effectDuration * 3);
 	}
 }
 
@@ -331,4 +381,10 @@ function	revertDirection()
 function	revertNoiseScale()
 {
 	r_pressed = false;
+}
+
+function	revertP()
+{
+	console.log("back to normal");
+	p_pressed = false;
 }
