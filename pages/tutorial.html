@@ -48,25 +48,58 @@
 
 	<div id="wrappie" class="text">
 		<div id="tutorial">
-			<h4>Introduction</h4>
+			
+			<h4>Contents</h4>
+			<ol>
+				<li>
+					<a href="#intro">Introduction</a>
+				</li>
+				<li>
+					<a href="#basics">The basics: HTML and CSS</a>
+				</li>
+				<li>
+					<a href="#offcanvas">Creating an offcanvas menu</a>
+				</li>
+				<li>
+					<a href="#flowfield">Creating a flow field</a>
+				</li>
+				<li>
+					<a href="#effects">Adding visual effects</a>
+				</li>
+			</ol><br>
+
+			<h4 id="intro">Introduction</h4>
 			<p>
 				When I started this project I had almost no knowledge of fronted web development. I had just started a course with
 				Code First Girls and learned the basics of HTML, CSS and JavaScript (which I highly recommend). During the course we
 				were encouraged to work on a personal project to get some practice in and to show that we had been paying attention
 				and were deserving of the course certificate. So, although I had some guidance throughout this course I believe that
 				anyone with some basic programming skills will be able to pull off this project.
-				<br><br>I wrote this tutorial for anyone who might want to recreate this project and also for myself as writing this
+			</p>
+			<p>
+				I wrote this tutorial for anyone who might want to recreate this project and also for myself as writing this
 				tutorial was a nice way to track my progress. If you, like I did, have no previous knowledge of frontend web dev,
 				you’ll be figuring a lot of things out along the way. Stick with it and don’t lose sight of the goal: to have some fun
 				and learn a few things along the way.
-				<br><br>DISCLAIMER: I am a beginner myself so I'm sure there are better/smarter ways to do things. Please contact me
+			</p>
+			<p>
+				DISCLAIMER: I am a beginner myself so I'm sure there are better/smarter ways to do things. Please contact me
 				if you have any tips! This is also not a step by step tutorial; my goal is just to give you some pointers on how to
 				go about this project.<br><br>
 			</p>
 			
-			<h4>The basics: HTML and CSS</h4>
+			<h4>Project overview</h4>
 			<p>
-				HTML is the foundation of every webpage you see on the internet. It's like the blueprint or skeleton of a webpage.
+				For this project you will be using HTML, CSS and Javascript. Your project directory might look something like this:
+			</p>
+
+			<img class="tutorial-img" src="../img/overview.png"><br><br>
+
+			<h4 id="basics">The basics: HTML and CSS</h4>
+			<p>
+				HTML is the foundation of every webpage you see on the internet. For a short introduction, you can watch
+				<a target="_blank" href="https://www.youtube.com/watch?v=ok-plXXHlWw">this video</a>.
+				HTML is like the skeleton of a webpage.
 				Think of HTML as a set of instructions that tells your web browser how to display the content on a webpage. These
 				instructions are made up of special codes called "tags." Each tag serves a specific purpose and tells the browser
 				how to format and present different elements, such as headings, paragraphs, images, links, and more. 
@@ -75,7 +108,7 @@
 				<br><br>While HTML takes care of the structure, CSS adds colors, fonts, and beautiful designs to make the webpage
 				look visually appealing. CSS helps you change the appearance of different elements on the page, such as the color of
 				text, the size of headings, the background color of sections, and more. 
-				<br><br>CSS works by selecting HTML elements using special rules, and then you can specify how those elements should
+				<br><br>CSS works by selecting HTML elements using classes and ID's, and then you can specify how those elements should
 				be styled. For example, you can use CSS to make all the headings on your page appear in a particular font, or you can
 				change the background color of buttons when someone hovers over them.
 			</p>
@@ -88,54 +121,38 @@
 			
 			<p>
 				The &lt;a&gt; tag turns the whole button into a link to the correct HTML file. It is imortant to create a link around the button tag instead of inside it if you want the whole button to be clickable. The &lt;i&gt; tag makes the
-				<a target="_blank" href="https://fontawesome.com/v4/icon/long-arrow-right">
-					Font Awsome arrow
-				</a>
-				 visible and &amp;nbsp creates some space between the text 'TUTORIAL' and the arrow.
+				<a target="_blank" href="https://fontawesome.com/v4/icon/long-arrow-right">Font Awsome arrow</a>
+				visible and &amp;nbsp creates some space between the text 'TUTORIAL' and the arrow.
 				<br><br>To change the appearance of the button, you will need CSS. I've added the button to the nav-button class
 				and can target this class in a .css file by typing the name of the class, preceded by a dot as you can see in the image below. I watched
-				<a target="_blank" href="https://www.youtube.com/watch?v=wXUhTZpF_HQ">
-					this video
-				</a>  
+				<a target="_blank" href="https://www.youtube.com/watch?v=wXUhTZpF_HQ">this video</a>  
 				to learn more about ID's and classes. Just using 'button' without the dot will target all buttons. I wanted all buttons in this project to have the same background color and change to the same color when you hover over. For the navigation buttons I wanted a specific width and font size.<br>
 				<img class="tutorial-img" src="../img/button CSS.png">
 			</p>
 
-			<h4>Creating an offcanvas menu</h4>
+			<h4 id="offcanvas">Creating an offcanvas menu</h4>
 			<p>
 				To create the offcanvas menu I used Bootstrap, a free framework that makes creating websites a lot easier.
-				<a target="_blank" href="https://getbootstrap.com/docs/5.0/components/offcanvas/">
-					Choose an offcanvas
-				</a>
+				<a target="_blank" href="https://getbootstrap.com/docs/5.0/components/offcanvas/">Choose an offcanvas</a>
 				from Bootstrap and adjust it to your liking. Just copy the HTML code and paste it to your .html file.
 				You can download the GitHub logo that I used
-				<a target="_blank" href="https://github.com/logos">
-					here
-				</a>.<br><br>
+				<a target="_blank" href="https://github.com/logos">here</a>.
+				<br><br>
 			</p>
 							
-			<h4>Creating a flow field</h4>
+			<h4 id="flowfield">Creating a flow field</h4>
 			<p>
 				Watch
-				<a target="_blank" href="https://www.youtube.com/watch?v=JlU3GskkcUw">
-					this video
-				</a>
+				<a target="_blank" href="https://www.youtube.com/watch?v=JlU3GskkcUw">this video</a>
 				for a short introduction to flow fields. I created my flow field using the JavaScript programming language.
 				For a very short introduction to JavaScript check out
-				<a href="https://www.youtube.com/watch?v=lkIFF4maKMU ">
-					this video
-				</a>
-				. If you’ve never used JavaScipt before (like I had) you will probably need to ask the internet for help often.
+				<a href="https://www.youtube.com/watch?v=lkIFF4maKMU ">this video</a>.
+				If you’ve never used JavaScipt before (like I had) you will probably need to ask the internet for help often.
 				To create the flow field I used a library called p5.js, a JavaScipt library that will make your life as a creative
 				coder a lot easier. I started out by coding along to
-				<a target="_blank" href="https://www.youtube.com/watch?v=sZBfLgfsvSk">
-					this video
-				</a>
-				, which teaches you an easy way to create a basic flow field using Perlin Noise. You can either start out by using
-				the 
-				<a target="_blank" href="https://editor.p5js.org/">
-					p5.js online editor
-				</a>
+				<a target="_blank" href="https://www.youtube.com/watch?v=sZBfLgfsvSk">this video</a>,
+				which teaches you an easy way to create a basic flow field using Perlin Noise. You can either start out by using the 
+				<a target="_blank" href="https://editor.p5js.org/">p5.js online editor</a>
 				or start by creating a JavaScipt file in your project directory. Link your JavaScript file to your HTML file using
 				the &lt;script&gt; tag. For example:
 			</p>
@@ -144,26 +161,19 @@
 
 			<p>
 				The p5js website does a good job at explaining 
-				<a target="_blank"  href="https://p5js.org/get-started/">
-					how to set it up
-				</a>
+				<a target="_blank"  href="https://p5js.org/get-started/">how to set it up</a>
 				. Definitely look into the concepts of Perlin noise and vectors. I found 
-				<a target="_blank" href="https://www.youtube.com/watch?v=bKEaK7WNLzM&t=720s">
-					this video
-				</a> on vectors very insightful. <br><br>
+				<a target="_blank" href="https://www.youtube.com/watch?v=bKEaK7WNLzM&t=720s">this video</a>
+				on vectors very insightful. <br><br>
 			</p>
 			
-			<h4>Adding visual effects</h4>
+			<h4 id="effects">Adding visual effects</h4>
 			<p>	
 				Once you’ve got your flow field up and running, you can start adding effects. To add effects I basically manipulated
 				the parameters that I was using to create my flow field, such as the speed, the 
-				<a target="_blank" href="https://p5js.org/reference/#/p5/strokeWeight">
-					stroke weight
-				</a>
+				<a target="_blank" href="https://p5js.org/reference/#/p5/strokeWeight">stroke weight</a>
 				, the color of the particles and the background color. You can detect if a key is pressed by using the 
-				<a target="_blank" href="https://p5js.org/reference/#/p5/keyPressed">
-					keyPressed function
-				</a>
+				<a target="_blank" href="https://p5js.org/reference/#/p5/keyPressed">keyPressed function</a>
 				, which is part of the p5.js library. Like so:
 			</p>
 
@@ -171,17 +181,11 @@
 
 			<p>
 				You can manage the duration of an effect by using the 
-				<a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/API/setTimeout">
-					setTimeout function
-				</a>
+				<a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/API/setTimeout">setTimeout function</a>
 				, which is a built-in JavaScript function. As an exercise you might want to start out by making the press of a 
 				specific key cause an increase in speed of the particles for a duration of (for example) three seconds. Then go
 				from there and start adding your own effects!
 			</p>
-
-
-
-			
 		</div>
 	</div>
 		
