@@ -1,9 +1,3 @@
-Process
-- How to use JavaScript
-- How to use p5.js
-- https://www.youtube.com/watch?v=sZBfLgfsvSk Code along tutorial
-- https://www.youtube.com/watch?v=bKEaK7WNLzM&t=720s Vectors
-
 
 26 letters 
 Options:
@@ -22,3 +16,4 @@ What if keys pressed at same time, set new timeout?
 Resizing window should work
 Mobile version?
 Check on different devices
+replace images

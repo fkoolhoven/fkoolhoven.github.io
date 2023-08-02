@@ -136,12 +136,18 @@ function particle_is_on_screen(particle)
 let previousSpeedTimeout;
 let	previousStrokeTimeout
 let effectDuration = 3000;
+
+
 function keyPressed() 
 {
 	if (key === 'z') 
 	{
-	//   background(color4);
+	//	do something
 	}
+
+
+
+	
 	if (key === 'x') 
 	{
 	//   background(color4);

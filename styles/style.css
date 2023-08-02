@@ -39,6 +39,31 @@ p{
 	border-color: black;
 }
 
+#menu-button:hover{
+	background-color: rgb(188, 251, 61);
+	padding: 2px;
+}
+
+button{
+	background-color: rgb(188, 251, 61);
+	padding: 20px;
+	border-style: none;
+	font-weight: lighter;
+}
+
+button:hover{
+	background-color: aliceblue;
+}
+
+.nav-button{
+	width: 250px;
+	font-size: large;
+}
+
+.contact-button{
+	width: 220px;
+}
+
 .offcanvas-body
 {
 	background-color: black;
@@ -55,27 +80,7 @@ p{
 	color:rgb(173, 255, 47) !important;
 }
 
-button{
-	background-color: rgb(188, 251, 61);
-	padding: 20px;
-	border-style: none;
-}
 
-.nav-button{
-	width: 250px;
-	font-size: large;
-}
-.nav-button:hover{
-	background-color: aliceblue;
-}
-
-.contact-button{
-	width: 220px;
-}
-
-.contact-button:hover{
-	background-color: aliceblue;
-}
 
 /* button:hover{
 	background-color: aliceblue;
@@ -103,13 +108,9 @@ button{
 	color: black;
 }
 
-#menu-button:hover{
-	background-color: rgb(188, 251, 61);
-	padding: 2px;
-}
 
 #tutorial{
-	max-width: 50%;
+	max-width: 40%;
 	justify-content:center;
 	min-width: 300px;
 }
@@ -122,6 +123,12 @@ button{
 	padding-bottom: 50px;
 }
 
-.button-text{
-	font-weight: lighter;
+
+.tutorial-img{
+	padding-top: 25px;
+	padding-bottom: 25px;
+	width: 450px;
+	/* justify-content: center;
+	text-align: center;
+	align-items: center; */
 }
