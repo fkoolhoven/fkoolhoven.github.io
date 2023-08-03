@@ -1,15 +1,4 @@
 
-26 letters 
-Options:
-- Particles move faster for a while
-- Particles slow down for a while
-- Particles change color for a while
-- Background changes color for a while
-- Particles change direction once
-- Particles become thicker for a while
-- Particles become less ordered for a while
-- Background changes from left to right
-- Background changes from right to left
 
 To do:
 What if keys pressed at same time, set new timeout?

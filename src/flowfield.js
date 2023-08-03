@@ -1,35 +1,7 @@
-// EVENT LISTENER
-// document.body.addEventListener("keydown", (ev) => 
-// {
-// 	if (ev.key == 'a')
-// 	{
-// 		console.log("great work you pressed A");
-// 		let audio = new Audio("audio/a.wav");
-// 		audio.play();
-// 	}
-// });
-
-// document.body.addEventListener("keydown", (ev) => 
-// {
-// 	if (ev.key == 'a')
-// 	{
-// 		noiseSeed(random(0, 10));
-// 	}
-// 	if (ev.key == 'b')
-// 	{
-// 		background(100, 10);
-// 	}
-// 	if (ev.key == 'c')
-// 	{
-// 		noiseSeed(random(0, 10));
-// 	}
-// });
-
-
-
 // GLOBAL VARIABLES
 let		particles = [];
 const	number_of_particles = 3000;
+
 let		noiseScale;
 let		noiseScaleDefault = 0.007;
 let		noiseScaleEffect = 0.0009;
@@ -38,6 +10,9 @@ let		directionEffect = 4;
 let		speed;
 let		speedDefault = 1.2;
 let		speedEffect = 2;
+let		strokeWeightDefault = 1;
+let		strokeWeightEffect = 1;
+
 let		color1;
 let		color2;
 let		color3;
@@ -51,11 +26,13 @@ let		w_pressed = false;
 let		e_pressed = false;
 let		r_pressed = false;
 let		p_pressed = false;
+let		o_pressed = false;
 
-let		strokeWeightDefault = 1;
-let		strokeWeightEffect = 1;
+let 	previousSpeedTimeout;
+let		previousStrokeTimeout
+let 	effectDuration = 3000;
 
-// CODE FOR FLOW FIELD VISUALS
+// INITIAL CANVAS SETUP
 function setup()
 {
 	const canvas = createCanvas(window.innerWidth, window.innerHeight);
@@ -71,8 +48,53 @@ function setup()
 	speed = speedDefault;
 	clear();
 }
+const acceleration = 1000;
+// DRAWING THE FLOW FIELD
+function draw()
+{
+	fill_background();
 
-function get_color(i)
+	for(let i = 0; i < number_of_particles; i++) 
+	{
+		let particle = particles[i];
+		
+		get_stroke_color(i);
+		get_stroke_weight();
+		point(particle.x, particle.y);
+		get_particle_direction(particle);
+		if (!o_pressed)
+			update_particle_position(particle);
+		if(!particle_is_on_screen(particle)) 
+		{
+			particle.x = random(width);
+			particle.y = random(height);
+		}
+	}
+}
+
+function fill_background()
+{
+	if (p_pressed)
+		background(0, 5);
+	else
+		background(0, 10);
+}
+
+function get_stroke_color(i)
+{
+	if (speed == speedDefault)
+		stroke(select_default_color(i));
+	else if (h_pressed)
+		stroke(color1);
+	else if (j_pressed)
+		stroke(color2);
+	else if (k_pressed)
+		stroke(color3);
+	else if (l_pressed)
+		stroke(color4);
+}
+
+function select_default_color(i)
 {
 	if (i % 5 == 0)
 		return (color1);
@@ -84,164 +106,116 @@ function get_color(i)
 		return (color4);
 }
 
-function draw()
+function get_stroke_weight()
 {
-	// if (p_pressed)
-	// {
-	// 	background(0, 10);
-	  
-	// 	let center = createVector(width / 2, height / 2); // Center of the screen
-	  
-	// 	for (let i = 0; i < num; i++) {
-	// 	  let p = particles[i];
-	// 	  point(p.x, p.y);
-	  
-	// 	  // Calculate the direction vector away from the center
-	// 	  let direction = p5.Vector.sub(p, center).normalize();
-	  
-	// 	  // Move the particle away from the center in the direction vector
-	// 	  p.add(direction);
-	  
-	// 	  // If the particle goes off-screen, reset its position to a random location
-	// 	  if (!onScreen(p)) {
-	// 		p.x = random(width);
-	// 		p.y = random(height);
-	// 	  }
-	// 	}
-	// }
+	if (w_pressed)
+		strokeWeight(strokeWeightEffect);
+	else
+		strokeWeight(strokeWeightDefault);
+}
 
+function get_particle_direction(particle)
+{
+	if (e_pressed)
+		direction = directionEffect;
+	else if (p_pressed)
+	{
+		let screen_center = createVector(width / 2, height / 2);
+		direction = p5.Vector.sub(particle, screen_center).normalize();
+	}
+	else if (o_pressed)
+	{
+		let screen_center = createVector(width / 2, height / 2);
+		let angle = atan2(particle.y - screen_center.y, particle.x - screen_center.x);
 
-
-	// else
-	// {
-		if (p_pressed)
-			background(0, 5); // why background changes back immediately
+    	let radius = dist(particle.x, particle.y, screen_center.x, screen_center.y);
+		angle += radians(speed / 3);
+		
+		particle.x = screen_center.x + radius * cos(angle); // update pos
+    	particle.y = screen_center.y + radius * sin(angle);
+	}
+	else
+	{
+		if (r_pressed)
+			noiseScale = noiseScaleEffect;
 		else
-		{
-			background(0, 10);
-		}
-		for(let i = 0; i < number_of_particles; i++) 
-		{
-			if (speed == speedDefault)
-				stroke(get_color(i));
-			else if (h_pressed)
-				stroke(color1);
-			else if (j_pressed)
-				stroke(color2);
-			else if (k_pressed)
-				stroke(color3);
-			else if (l_pressed)
-				stroke(color4);
-			if (w_pressed)
-				strokeWeight(strokeWeightEffect);
-			else
-				strokeWeight(strokeWeightDefault);
-			let particle = particles[i];
-			point(particle.x, particle.y);
+			noiseScale = noiseScaleDefault;
+		let noise_value = noise(particle.x * noiseScale, particle.y * noiseScale, frameCount * noiseScale * noiseScale);
+		direction = TAU * noise_value;
+	}
+}
 
-			if (r_pressed)
-				noiseScale = noiseScaleEffect;
-			else
-				noiseScale = noiseScaleDefault;
-
-			let noise_value = noise(particle.x * noiseScale, particle.y * noiseScale, frameCount * noiseScale * noiseScale);
-			if (e_pressed)
-				direction = directionEffect;
-			else if (p_pressed)
-			{
-				let center = createVector(width / 2, height / 2);
-				direction = p5.Vector.sub(particle, center).normalize();
-				particle.add(p5.Vector.mult(direction, speed));
-			}
-			else
-				direction = TAU * noise_value;
-
-			if (!p_pressed)
-			{
-				particle.x += cos(direction) * speed;
-				particle.y += sin(direction) * speed;
-			}
-			if(!particle_is_on_screen(particle)) 
-			{
-				particle.x = random(width);
-				particle.y = random(height);
-			}
-		}
-	// }
-
-
-
-
-	
+function update_particle_position(particle)
+{
+	if (p_pressed)
+		particle.add(p5.Vector.mult(direction, speed));
+	else
+	{
+		particle.x += cos(direction) * speed;
+		particle.y += sin(direction) * speed;
+	}
 }
 
 function particle_is_on_screen(particle)
 {
 	if (particle.x >= 0 && particle.x <= width && particle.y >= 0 && particle.y <= height)
 		return (true);
-	return (false);
+	else
+		return (false);
 }
 
-let previousSpeedTimeout;
-let	previousStrokeTimeout
-let effectDuration = 3000;
-
-
+// VISUAL EFFECTS TRIGGERED BY KEY PRESSES
 function keyPressed() 
 {
-	if (key === 'z') 
+	if (key == 'z' || key == 'Z') 
 	{
 	//	do something
 	}
-
-
-
-	
-	if (key === 'x') 
+	else if (key == 'x' || key == 'X') 
 	{
-	//   background(color4);
+	//   do something
 	}
-	if (key === 'c') 
+	else if (key == 'c' || key == 'C') 
 	{
-	//   background(color4);
+	//   do something
 	}
-	if (key === 'v') 
+	else if (key == 'v' || key == 'V') 
 	{
-	//   background(color4);
+	//   do something
 	}
-	if (key === 'b') 
+	else if (key == 'b' || key == 'B') 
 	{
-	//   background(color4);
+	//   do something
 	}
-	if (key === 'n') 
+	else if (key == 'n' || key == 'N') 
 	{
-	//   background(color4);
+	//   do something
 	}
-	if (key === 'm') 
+	else if (key == 'm' || key == 'M') 
 	{
-	//   background(color4);
+	//   do something
 	}
-	if (key === 'a') 
+	else if (key == 'a' || key == 'A') 
+	{
+		background(color1);
+	}
+	else if (key == 's' || key == 'S') 
 	{
 		background(color2);
 	}
-	if (key === 's') 
+	else if (key == 'd' || key == 'D') 
 	{
 		background(color3);
 	}
-	if (key === 'd') 
+	else if (key == 'f' || key == 'F') 
 	{
-		background(color4);
+	 	background(color4);
 	}
-	if (key === 'f') 
-	{
-	 	noiseSeed(random(0, 10));
-	}
-	if (key === 'g') 
+	else if (key == 'g' || key == 'G') 
 	{
 	 	noiseSeed(random(0, 10));
 	}
-	if (key === 'h') 
+	else if (key == 'h' || key == 'H') 
 	{
 		revertSpeed();
 		speed = speedEffect;
@@ -249,7 +223,7 @@ function keyPressed()
 		clearTimeout(previousSpeedTimeout);
 		previousSpeedTimeout = setTimeout(revertSpeed, effectDuration);
 	}
-	if (key === 'j') 
+	else if (key == 'j' || key == 'J') 
 	{
 		revertSpeed();
 		speed = speedEffect;
@@ -257,7 +231,7 @@ function keyPressed()
 		clearTimeout(previousSpeedTimeout);
 		previousSpeedTimeout = setTimeout(revertSpeed, effectDuration);
 	}
-	if (key === 'k') 
+	else if (key == 'k' || key == 'K') 
 	{
 		revertSpeed();
 		speed = speedEffect;
@@ -265,7 +239,7 @@ function keyPressed()
 		clearTimeout(previousSpeedTimeout);
 		previousSpeedTimeout = setTimeout(revertSpeed, effectDuration);
 	}
-	if (key === 'l') 
+	else if (key == 'l' || key == 'L') 
 	{
 		revertSpeed();
 		speed = speedEffect;
@@ -273,63 +247,56 @@ function keyPressed()
 		clearTimeout(previousSpeedTimeout);
 		previousSpeedTimeout = setTimeout(revertSpeed, effectDuration);
 	}
-	if (key === 'q') 
+	else if (key == 'q' || key == 'Q') 
 	{
 		glitches(40);
 		
 	}
-	if (key === 'w') 
+	else if ((key == 'w' || key == 'W') && !w_pressed) 
 	{
-		if (!w_pressed)
-		{
-			w_pressed = true;
-			strokeGrow(40);
-		}
+		w_pressed = true;
+		strokeGrow(40);
 	}
-	if (key === 'e') 
+	else if ((key == 'e' || key == 'E') && !e_pressed) 
 	{
-		if (!e_pressed)
-		{
-			e_pressed = true;
-			setTimeout(revertDirection, effectDuration);
-		}		
+		e_pressed = true;
+		setTimeout(revertE, effectDuration);
 	}
-	if (key === 'r') 
+	else if ((key == 'r' || key == 'R') && !r_pressed) 
 	{
-		if (!r_pressed)
-		{
-			r_pressed = true;
-			setTimeout(revertNoiseScale, effectDuration * 3);
-		}
+		r_pressed = true;
+		setTimeout(revertR, effectDuration * 3);
 	}
-	if (key === 't') 
+	else if (key == 't' || key == 'T')
 	{
-	//   background(color4);
+	//   do something
 	}
-	if (key === 'y') 
+	else if (key == 'y' || key == 'Y')
 	{
-	//   background(color4);
+	//   do something
 	}
-	if (key === 'u') 
+	else if (key == 'u' || key == 'U')
 	{
-	//   background(color4);
+	//   do something
 	}
-	if (key === 'i') 
+	else if (key == 'i' || key == 'I')
 	{
-	//   background(color4);
+	//   do something
 	}
-	if (key === 'o') 
+	else if ((key == 'o' || key == 'O') && !o_pressed)
 	{
-	//   background(color4);
+		o_pressed = true;
+	 	setTimeout(revertP, effectDuration * 3);
 	}
-	if (key === 'p' && !p_pressed) 
+	else if ((key == 'p' || key == 'P') && !p_pressed) 
 	{
 		p_pressed = true;
 		setTimeout(revertP, effectDuration * 3);
 	}
 }
 
-function	glitches(number)
+// EFFECT FUNCTIONS
+function glitches(number)
 {
 	if (number > 0)
 	{
@@ -338,25 +305,25 @@ function	glitches(number)
 	}
 }
 
-function	strokeGrow(number)
+function strokeGrow(number)
 {
 	if (number > 20)
 	{
 		strokeWeightEffect += 0.5;
-		console.log("number = ", number);
 		setTimeout(() => strokeGrow(number - 1), 30);
 	}
 	else if (number > 0)
 	{
 		strokeWeightEffect -= 0.5;
-		console.log("number = ", number);
 		setTimeout(() => strokeGrow(number - 1), 30);
 	}
 	else if (number == 0)
 		revertW();
 }
 
-function	revertSpeed()
+
+// RESET EFFECT FUNCTIONS
+function revertSpeed()
 {
 	if (speed == speedEffect)
 		speed = speedDefault;
@@ -367,24 +334,28 @@ function	revertSpeed()
 	
 }
 
-function	revertW()
-{
-	w_pressed = false;
-	strokeWeightEffect = strokeWeightDefault;
-}
-
-function	revertDirection()
+function revertE()
 {
 	e_pressed = false;
 }
 
-function	revertNoiseScale()
+function revertP()
+{
+	p_pressed = false;
+}
+
+function revertO()
+{
+	o_pressed = false;
+}
+
+function revertR()
 {
 	r_pressed = false;
 }
 
-function	revertP()
+function revertW()
 {
-	console.log("back to normal");
-	p_pressed = false;
+	w_pressed = false;
+	strokeWeightEffect = strokeWeightDefault;
 }
