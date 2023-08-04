@@ -17,14 +17,17 @@ let		color1;
 let		color2;
 let		color3;
 let		color4;
+let		color5;
 
 let		h_pressed = false;
+let		i_pressed = false;
 let		j_pressed = false;
 let		k_pressed = false;
 let		l_pressed = false;
 let		w_pressed = false;
 let		e_pressed = false;
 let		r_pressed = false;
+let		u_pressed = false;
 let		p_pressed = false;
 let		o_pressed = false;
 
@@ -45,10 +48,11 @@ function setup()
 	color2 = color(173, 255, 47);
 	color3 = color(248, 51, 60); 
 	color4 = color(43, 158, 179);
+	color5 = color(228, 208, 10);
 	speed = speedDefault;
 	clear();
 }
-const acceleration = 1000;
+
 // DRAWING THE FLOW FIELD
 function draw()
 {
@@ -74,16 +78,22 @@ function draw()
 
 function fill_background()
 {
-	if (p_pressed)
+	if (u_pressed)
+		background(0, 0);
+	else if (p_pressed)
 		background(0, 5);
+	else if (i_pressed)
+		background(0, 7)
 	else
 		background(0, 10);
 }
 
 function get_stroke_color(i)
 {
-	if (speed == speedDefault)
+	if (speed == speedDefault && !i_pressed)
+	{
 		stroke(select_default_color(i));
+	}
 	else if (h_pressed)
 		stroke(color1);
 	else if (j_pressed)
@@ -92,7 +102,9 @@ function get_stroke_color(i)
 		stroke(color3);
 	else if (l_pressed)
 		stroke(color4);
-}
+	else if (i_pressed)
+		stroke(color5);
+	}
 
 function select_default_color(i)
 {
@@ -215,7 +227,7 @@ function keyPressed()
 	{
 	 	noiseSeed(random(0, 10));
 	}
-	else if (key == 'h' || key == 'H') 
+	else if ((key == 'h' || key == 'H') && !i_pressed) 
 	{
 		revertSpeed();
 		speed = speedEffect;
@@ -223,7 +235,7 @@ function keyPressed()
 		clearTimeout(previousSpeedTimeout);
 		previousSpeedTimeout = setTimeout(revertSpeed, effectDuration);
 	}
-	else if (key == 'j' || key == 'J') 
+	else if ((key == 'j' || key == 'J') && !i_pressed) 
 	{
 		revertSpeed();
 		speed = speedEffect;
@@ -231,7 +243,7 @@ function keyPressed()
 		clearTimeout(previousSpeedTimeout);
 		previousSpeedTimeout = setTimeout(revertSpeed, effectDuration);
 	}
-	else if (key == 'k' || key == 'K') 
+	else if ((key == 'k' || key == 'K') && !i_pressed) 
 	{
 		revertSpeed();
 		speed = speedEffect;
@@ -239,7 +251,7 @@ function keyPressed()
 		clearTimeout(previousSpeedTimeout);
 		previousSpeedTimeout = setTimeout(revertSpeed, effectDuration);
 	}
-	else if (key == 'l' || key == 'L') 
+	else if ((key == 'l' || key == 'L') && !i_pressed) 
 	{
 		revertSpeed();
 		speed = speedEffect;
@@ -277,21 +289,25 @@ function keyPressed()
 	}
 	else if (key == 'u' || key == 'U')
 	{
-	//   do something
+		u_pressed = true;
+		setTimeout(revertU, effectDuration * 5);
 	}
-	else if (key == 'i' || key == 'I')
+	else if ((key == 'i' || key == 'I') && !i_pressed)
 	{
-	//   do something
+		revertSpeed();
+		clearTimeout(previousSpeedTimeout);
+		i_pressed = true;
+		slowDown(41);
 	}
-	else if ((key == 'o' || key == 'O') && !o_pressed)
+	else if ((key == 'o' || key == 'O') && !o_pressed && !p_pressed)
 	{
 		o_pressed = true;
-	 	setTimeout(revertP, effectDuration * 3);
+	 	setTimeout(revertO, effectDuration * 2);
 	}
 	else if ((key == 'p' || key == 'P') && !p_pressed) 
 	{
 		p_pressed = true;
-		setTimeout(revertP, effectDuration * 3);
+		setTimeout(revertP, 9000);
 	}
 }
 
@@ -303,6 +319,27 @@ function glitches(number)
 		noiseSeed(random(0, 10));
 		setTimeout(() => glitches(number - 1), 30);
 	}
+}
+
+function slowDown(number)
+{
+	if (number > 35)
+	{
+		speed += 0.3;
+		setTimeout(() => slowDown(number - 1), 50);
+	}
+	else if (number > 1)
+	{
+		speed -= 0.2;
+		setTimeout(() => slowDown(number - 1), 50);
+	}
+	else if (number == 1)
+	{
+		speed -= 0.2;
+		setTimeout(() => slowDown(number - 1), 5000);
+	}
+	else if (number == 0)
+		revertI();
 }
 
 function strokeGrow(number)
@@ -331,12 +368,17 @@ function revertSpeed()
 	j_pressed = false;
 	k_pressed = false;
 	l_pressed = false;
-	
 }
 
 function revertE()
 {
 	e_pressed = false;
+}
+
+function revertI()
+{
+	i_pressed = false;
+	speed = speedDefault;
 }
 
 function revertP()
@@ -347,6 +389,11 @@ function revertP()
 function revertO()
 {
 	o_pressed = false;
+}
+
+function revertU()
+{
+	u_pressed = false;
 }
 
 function revertR()
