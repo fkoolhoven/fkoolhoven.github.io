@@ -17,37 +17,37 @@
 
 	<div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="Menu" aria-labelledby="MenuLabel">
 		<div class="offcanvas-body d-flex flex-column">
-		  <div class="text-center">
-			  <a href="../index.html">
-				  <button class="nav-button">
-						HOME&nbsp&nbsp
-					  <i class="fa fa-long-arrow-right"></i>
-				  </button>
-			  </a>
-			  <br><br>
-			  <a href="contact.html">
-				  <button class="nav-button">
-						CONTACT&nbsp&nbsp
-					  <i class="fa fa-long-arrow-right"></i>
-				  </button>
-			  </a>
-			  <br><br>
-		  </div>
-		  <div class="mt-auto">
-			  <p>
-				  Soundkey was made by Felicia Koolhoven. View the code on GitHub:<br><br>
-			  </p>
-			  <div class="text-center">
-				  <a href="https://github.com/fkoolhoven/soundkey" target="_blank">
-					  <img id="github-logo" src="../img/github-mark-white.png" class="img-fluid rounded" alt="GitHub logo">
+		  	<div class="text-center">
+				  <a href="../index.html">
+					  <button class="nav-button">
+							HOME&nbsp&nbsp
+						  <i class="fa fa-long-arrow-right"></i>
+					  </button>
 				  </a>
-			  </div>
-		  </div>
+				  <br><br>
+				  <a href="contact.html">
+					  <button class="nav-button">
+							CONTACT&nbsp&nbsp
+						  <i class="fa fa-long-arrow-right"></i>
+					  </button>
+				  </a>
+				  <br><br>
+		  	</div>
+		  	<div class="mt-auto">
+				  <p>
+					  Soundkey was made by Felicia Koolhoven. View the code on GitHub:<br><br>
+				  </p>
+				  <div class="text-center">
+					  <a href="https://github.com/fkoolhoven/fkoolhoven.github.io" target="_blank">
+						  <img id="github-logo" src="../img/github-mark-white.png" class="img-fluid rounded" alt="GitHub logo">
+					  </a>
+				  </div>
+		  	</div>
 		</div>
   	</div>
 
-	<div id="wrappie" class="text">
-		<div id="tutorial">
+	<div id="tutorial-page" class="text">
+		<div id="tutorial-text">
 			
 			<h4>Contents</h4>
 			<ol>
@@ -161,8 +161,8 @@
 
 			<p>
 				The p5js website does a good job at explaining 
-				<a target="_blank"  href="https://p5js.org/get-started/">how to set it up</a>
-				. Definitely look into the concepts of Perlin noise and vectors. I found 
+				<a target="_blank"  href="https://p5js.org/get-started/">how to set it up</a>.
+				Definitely look into the concepts of Perlin noise and vectors. I found 
 				<a target="_blank" href="https://www.youtube.com/watch?v=bKEaK7WNLzM&t=720s">this video</a>
 				on vectors very insightful. <br><br>
 			</p>
@@ -171,18 +171,18 @@
 			<p>	
 				Once you’ve got your flow field up and running, you can start adding effects. To add effects I basically manipulated
 				the parameters that I was using to create my flow field, such as the speed, the 
-				<a target="_blank" href="https://p5js.org/reference/#/p5/strokeWeight">stroke weight</a>
-				, the color of the particles and the background color. You can detect if a key is pressed by using the 
-				<a target="_blank" href="https://p5js.org/reference/#/p5/keyPressed">keyPressed function</a>
-				, which is part of the p5.js library. Like so:
+				<a target="_blank" href="https://p5js.org/reference/#/p5/strokeWeight">stroke weight</a>,
+				the color of the particles and the background color. You can detect if a key is pressed by using the 
+				<a target="_blank" href="https://p5js.org/reference/#/p5/keyPressed">keyPressed function</a>,
+				which is part of the p5.js library. Like so:
 			</p>
 
 			<img class="tutorial-img" src="../img/keyPressed.png">
 
 			<p>
 				You can manage the duration of an effect by using the 
-				<a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/API/setTimeout">setTimeout function</a>
-				, which is a built-in JavaScript function. As an exercise you might want to start out by making the press of a 
+				<a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/API/setTimeout">setTimeout function</a>,
+				which is a built-in JavaScript function. As an exercise you might want to start out by making the press of a 
 				specific key cause an increase in speed of the particles for a duration of (for example) three seconds. Then go
 				from there and start adding your own effects!
 			</p>
