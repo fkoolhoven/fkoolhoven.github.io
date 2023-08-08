@@ -1,5 +1,12 @@
-# flowfield
-An interactive regenerative flow field that let's you create your own art using just your keyboard.
+<div align="center">
+
+  <img src="img/FLOWFIELD.png" alt="logo" width="1000" height="auto" />
+ 
+  <p>
+   An interactive regenerative flow field that let's you create your own art using just your keyboard.     </p>
+  
+</div>
+
 I am currently working on this project so it's not finished yet!
 
 # About the project
