@@ -1,16 +1,10 @@
 <div align="center">
-
   <img src="img/FLOWFIELD.png" alt="logo" width="1000" height="auto" />
- 
-  <p>
-   An interactive regenerative flow field that let's you create your own art using just your keyboard.     </p>
-  
+  <p>An interactive regenerative flow field that let's you create your own art using just your keyboard.     </p>
 </div>
 
-I am currently working on this project so it's not finished yet!
-
 # About the project
-A project I am currently working on as part of the CFG course in web development. I created an interactive fow field that let's you manipulate different paramaters through pressing keys on your keyboard. It lets you create your own art. This is a work in progress; I am still adding effects and want to add sound effects as well.
+CURRENTLY WORKING ON THIS PROJECT; NOT FINISHED YET. A project I am currently working on as part of the CFG course in web development. I created an interactive fow field that let's you manipulate different paramaters through pressing keys on your keyboard. It lets you create your own art. This is a work in progress; I am still adding effects and want to add sound effects as well.
 
 # Usage
 Try it out at [fkoolhoven.github.io](fkoolhoven.github.io) <br>
