@@ -7,6 +7,10 @@
 CURRENTLY WORKING ON THIS PROJECT; NOT FINISHED YET. <br>
 A project I am currently working on as part of the [CFG course](https://codefirstgirls.com/) in web development. I created an interactive fow field that lets you manipulate different paramaters through pressing keys on your keyboard so you can create your own art. This is a work in progress; I am still adding effects and want to add sound effects as well.
 
+<img src="img/screenshot1.png" alt="img disappeared" width="1000" height="auto" />
+<img src="img/screenshot2.png" alt="img disappeared" width="1000" height="auto" />
+<img src="img/screenshot3.png" alt="img disappeared" width="1000" height="auto" />
+
 # Usage
 Try it out at [fkoolhoven.github.io](https://fkoolhoven.github.io/) <br>
 Go to the Tutorial page for more info on how I made this.
