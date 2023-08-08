@@ -1,8 +1,0 @@
-
-
-To do:
-What if keys pressed at same time, set new timeout?
-Resizing window should work
-Mobile version?
-Check on different devices
-replace images
