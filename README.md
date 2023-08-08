@@ -7,7 +7,7 @@
 CURRENTLY WORKING ON THIS PROJECT; NOT FINISHED YET. A project I am currently working on as part of the CFG course in web development. I created an interactive fow field that let's you manipulate different paramaters through pressing keys on your keyboard. It lets you create your own art. This is a work in progress; I am still adding effects and want to add sound effects as well.
 
 # Usage
-Try it out at [fkoolhoven.github.io](fkoolhoven.github.io) <br>
+Try it out at [fkoolhoven.github.io](https://fkoolhoven.github.io/) <br>
 Go to the Tutorial page for more info on how I made this.
 
 # Important learnings
