@@ -309,6 +309,11 @@ function keyPressed()
 		p_pressed = true;
 		setTimeout(revertP, 9000);
 	}
+	if (key == ' ')
+	{
+		console.log("yayyy");
+		revertAll();
+	}
 }
 
 // EFFECT FUNCTIONS
@@ -360,6 +365,19 @@ function strokeGrow(number)
 
 
 // RESET EFFECT FUNCTIONS
+
+function revertAll()
+{
+	revertSpeed();
+	revertE();
+	revertI();
+	revertO();
+	revertP();
+	revertR();
+	revertU();
+	revertW();
+}
+
 function revertSpeed()
 {
 	if (speed == speedEffect)
