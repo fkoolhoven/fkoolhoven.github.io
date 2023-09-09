@@ -26,7 +26,10 @@ let		k_pressed = false;
 let		l_pressed = false;
 let		w_pressed = false;
 let		e_pressed = false;
+let		g_pressed = false;
 let		r_pressed = false;
+let		t_pressed = false;
+let		y_pressed = false;
 let		u_pressed = false;
 let		p_pressed = false;
 let		o_pressed = false;
@@ -78,7 +81,7 @@ function draw()
 
 function fill_background()
 {
-	if (u_pressed)
+	if (r_pressed || t_pressed)
 		background(0, 0);
 	else if (p_pressed)
 		background(0, 5);
@@ -120,7 +123,7 @@ function select_default_color(i)
 
 function get_stroke_weight()
 {
-	if (w_pressed)
+	if (w_pressed || e_pressed)
 		strokeWeight(strokeWeightEffect);
 	else
 		strokeWeight(strokeWeightDefault);
@@ -128,7 +131,7 @@ function get_stroke_weight()
 
 function get_particle_direction(particle)
 {
-	if (e_pressed)
+	if (u_pressed)
 		direction = directionEffect;
 	else if (p_pressed)
 	{
@@ -143,12 +146,12 @@ function get_particle_direction(particle)
     	let radius = dist(particle.x, particle.y, screen_center.x, screen_center.y);
 		angle += radians(speed / 3);
 		
-		particle.x = screen_center.x + radius * cos(angle); // update pos
+		particle.x = screen_center.x + radius * cos(angle); // update pos, move to pos func?
     	particle.y = screen_center.y + radius * sin(angle);
 	}
 	else
 	{
-		if (r_pressed)
+		if (y_pressed)
 			noiseScale = noiseScaleEffect;
 		else
 			noiseScale = noiseScaleDefault;
@@ -225,7 +228,7 @@ function keyPressed()
 	}
 	else if (key == 'g' || key == 'G') 
 	{
-	 	noiseSeed(random(0, 10));
+		background(color(random(100, 255), random(100, 200), random(100, 255)));
 	}
 	else if ((key == 'h' || key == 'H') && !i_pressed) 
 	{
@@ -264,33 +267,35 @@ function keyPressed()
 		glitches(40);
 		
 	}
-	else if ((key == 'w' || key == 'W') && !w_pressed) 
+	else if ((key == 'w' || key == 'W') && !w_pressed && !e_pressed) 
 	{
 		w_pressed = true;
 		strokeGrow(40);
 	}
-	else if ((key == 'e' || key == 'E') && !e_pressed) 
+	else if (key == 'e' || key == 'E' && !e_pressed && !w_pressed) 
 	{
 		e_pressed = true;
-		setTimeout(revertE, effectDuration);
+		strokeGrow(60);
 	}
-	else if ((key == 'r' || key == 'R') && !r_pressed) 
+	else if ((key == 'r' || key == 'R') && !r_pressed && !t_pressed) 
 	{
 		r_pressed = true;
-		setTimeout(revertR, effectDuration * 3);
+		setTimeout(revertR, effectDuration * 5);
 	}
-	else if (key == 't' || key == 'T')
+	else if ((key == 't' || key == 'T') && !t_pressed && !r_pressed)
 	{
-	//   do something
+		t_pressed = true;
+		setTimeout(revertT, effectDuration * 10);
 	}
-	else if (key == 'y' || key == 'Y')
+	else if ((key == 'y' || key == 'Y') && !y_pressed)
 	{
-	//   do something
+	 	y_pressed = true;
+		setTimeout(revertY, effectDuration * 3);
 	}
-	else if (key == 'u' || key == 'U')
+	else if ((key == 'u' || key == 'U') && !u_pressed)
 	{
 		u_pressed = true;
-		setTimeout(revertU, effectDuration * 5);
+		setTimeout(revertU, effectDuration);
 	}
 	else if ((key == 'i' || key == 'I') && !i_pressed)
 	{
@@ -311,7 +316,6 @@ function keyPressed()
 	}
 	if (key == ' ')
 	{
-		console.log("yayyy");
 		revertAll();
 	}
 }
@@ -354,13 +358,21 @@ function strokeGrow(number)
 		strokeWeightEffect += 0.5;
 		setTimeout(() => strokeGrow(number - 1), 30);
 	}
-	else if (number > 0)
+	else if (number > 0 && w_pressed)
 	{
 		strokeWeightEffect -= 0.5;
 		setTimeout(() => strokeGrow(number - 1), 30);
 	}
-	else if (number == 0)
+	else if (number > 0 && e_pressed)
+	{
+		strokeWeightEffect -= 0.20;
+		setTimeout(() => strokeGrow(number - 0.2), 60);
+	}
+	else if (number <= 0)
+	{
 		revertW();
+		revertE();
+	}
 }
 
 
@@ -370,10 +382,12 @@ function revertAll()
 {
 	revertSpeed();
 	revertE();
+	revertG();
 	revertI();
 	revertO();
 	revertP();
 	revertR();
+	revertT();
 	revertU();
 	revertW();
 }
@@ -391,6 +405,12 @@ function revertSpeed()
 function revertE()
 {
 	e_pressed = false;
+	strokeWeightEffect = strokeWeightDefault;
+}
+
+function revertG()
+{
+	g_pressed = false;
 }
 
 function revertI()
@@ -409,14 +429,24 @@ function revertO()
 	o_pressed = false;
 }
 
+function revertR()
+{
+	r_pressed = false;
+}
+
+function revertT()
+{
+	t_pressed = false;
+}
+
 function revertU()
 {
 	u_pressed = false;
 }
 
-function revertR()
+function revertY()
 {
-	r_pressed = false;
+	y_pressed = false;
 }
 
 function revertW()
