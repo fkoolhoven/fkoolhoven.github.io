@@ -19,24 +19,27 @@ let		color3;
 let		color4;
 let		color5;
 
-let		h_pressed = false;
-let		i_pressed = false;
-let		j_pressed = false;
-let		k_pressed = false;
-let		l_pressed = false;
-let		w_pressed = false;
-let		e_pressed = false;
-let		g_pressed = false;
-let		r_pressed = false;
-let		t_pressed = false;
-let		y_pressed = false;
-let		u_pressed = false;
-let		p_pressed = false;
-let		o_pressed = false;
+let		inverse_direction = false;
+let		medium_stroke = false;
+let		large_stroke = false;
+let		random_background = false;
+let		short_trail = false;
+let		long_trail = false;
+let		warp_direction = false;
+let		diagonal_direction = false;
+let		sunshine_direction = false;
+let		circle_direction = false;
+let		pause_particles = false;
+let 	color_blue = false;
+let 	color_red = false;
+let 	color_green = false;
+let 	color_white = false;
 
 let 	previousSpeedTimeout;
 let		previousStrokeTimeout
 let 	effectDuration = 3000;
+
+let		screen_center;
 
 // INITIAL CANVAS SETUP
 function setup()
@@ -52,6 +55,7 @@ function setup()
 	color3 = color(248, 51, 60); 
 	color4 = color(43, 158, 179);
 	color5 = color(228, 208, 10);
+	screen_center = createVector(width / 2, height / 2);
 	speed = speedDefault;
 	clear();
 }
@@ -59,33 +63,35 @@ function setup()
 // DRAWING THE FLOW FIELD
 function draw()
 {
-	fill_background();
-
-	for(let i = 0; i < number_of_particles; i++) 
+	if (!pause_particles)
 	{
-		let particle = particles[i];
-		
-		get_stroke_color(i);
-		get_stroke_weight();
-		point(particle.x, particle.y);
-		get_particle_direction(particle);
-		if (!o_pressed)
-			update_particle_position(particle);
-		if(!particle_is_on_screen(particle)) 
+		fill_background();
+	
+		for(let i = 0; i < number_of_particles; i++) 
 		{
-			particle.x = random(width);
-			particle.y = random(height);
+			let particle = particles[i];
+			
+			get_stroke_color(i);
+			get_stroke_weight();
+			point(particle.x, particle.y);
+			get_particle_direction(particle);
+			update_particle_position(particle);
+			if(!particle_is_on_screen(particle)) 
+			{
+				particle.x = random(width);
+				particle.y = random(height);
+			}
 		}
 	}
 }
 
 function fill_background()
 {
-	if (r_pressed || t_pressed)
+	if (short_trail || long_trail)
 		background(0, 0);
-	else if (p_pressed)
+	else if (sunshine_direction)
 		background(0, 5);
-	else if (i_pressed)
+	else if (inverse_direction)
 		background(0, 7)
 	else
 		background(0, 10);
@@ -93,37 +99,35 @@ function fill_background()
 
 function get_stroke_color(i)
 {
-	if (speed == speedDefault && !i_pressed)
-	{
-		stroke(select_default_color(i));
-	}
-	else if (h_pressed)
+	if (color_white)
 		stroke(color1);
-	else if (j_pressed)
+	else if (color_green)
 		stroke(color2);
-	else if (k_pressed)
+	else if (color_red)
 		stroke(color3);
-	else if (l_pressed)
+	else if (color_blue)
 		stroke(color4);
-	else if (i_pressed)
-		stroke(color5);
-	}
+	else
+		stroke(select_default_color(i));
+}
 
 function select_default_color(i)
 {
-	if (i % 5 == 0)
-		return (color1);
-	else if (i % 3 == 0)
-		return (color2);
-	else if (i % 2 == 0)
-		return (color3);
-	else
-		return (color4);
+	let range = number_of_particles / 4;
+
+    if (i < range)
+        return color1;
+    else if (i < 2 * range)
+        return color2;
+    else if (i < 3 * range)
+        return color3;
+    else
+        return color4;
 }
 
 function get_stroke_weight()
 {
-	if (w_pressed || e_pressed)
+	if (medium_stroke || large_stroke)
 		strokeWeight(strokeWeightEffect);
 	else
 		strokeWeight(strokeWeightDefault);
@@ -131,27 +135,22 @@ function get_stroke_weight()
 
 function get_particle_direction(particle)
 {
-	if (u_pressed)
-		direction = directionEffect;
-	else if (p_pressed)
+	if (diagonal_direction)
 	{
-		let screen_center = createVector(width / 2, height / 2);
+		direction = directionEffect;
+	}
+	else if (sunshine_direction)
+	{
 		direction = p5.Vector.sub(particle, screen_center).normalize();
 	}
-	else if (o_pressed)
+	else if (circle_direction)
 	{
-		let screen_center = createVector(width / 2, height / 2);
-		let angle = atan2(particle.y - screen_center.y, particle.x - screen_center.x);
-
-    	let radius = dist(particle.x, particle.y, screen_center.x, screen_center.y);
-		angle += radians(speed / 3);
-		
-		particle.x = screen_center.x + radius * cos(angle); // update pos, move to pos func?
-    	particle.y = screen_center.y + radius * sin(angle);
+		direction = atan2(particle.y - screen_center.y, particle.x - screen_center.x);
+		direction += radians(speed / 3);
 	}
 	else
 	{
-		if (y_pressed)
+		if (warp_direction)
 			noiseScale = noiseScaleEffect;
 		else
 			noiseScale = noiseScaleDefault;
@@ -162,8 +161,16 @@ function get_particle_direction(particle)
 
 function update_particle_position(particle)
 {
-	if (p_pressed)
+	if (sunshine_direction)
+	{
 		particle.add(p5.Vector.mult(direction, speed));
+	}
+	else if (circle_direction)
+	{
+    	let radius = dist(particle.x, particle.y, screen_center.x, screen_center.y);
+		particle.x = screen_center.x + radius * cos(direction);
+    	particle.y = screen_center.y + radius * sin(direction);
+	}
 	else
 	{
 		particle.x += cos(direction) * speed;
@@ -230,93 +237,103 @@ function keyPressed()
 	{
 		background(color(random(100, 255), random(100, 200), random(100, 255)));
 	}
-	else if ((key == 'h' || key == 'H') && !i_pressed) 
+	else if ((key == 'h' || key == 'H')) 
 	{
-		revertSpeed();
-		speed = speedEffect;
-		h_pressed = true;
-		clearTimeout(previousSpeedTimeout);
-		previousSpeedTimeout = setTimeout(revertSpeed, effectDuration);
+		revertColor();
+		color_white = true;
+
+		if (inverse_direction)
+			setTimeout(revertWhite, effectDuration);
+		else
+			speedUp();
 	}
-	else if ((key == 'j' || key == 'J') && !i_pressed) 
+	else if ((key == 'j' || key == 'J')) 
 	{
-		revertSpeed();
-		speed = speedEffect;
-		j_pressed = true;
-		clearTimeout(previousSpeedTimeout);
-		previousSpeedTimeout = setTimeout(revertSpeed, effectDuration);
+		revertColor();
+		color_green = true;
+
+		if (inverse_direction)
+			setTimeout(revertGreen, effectDuration);
+		else
+			speedUp();
 	}
-	else if ((key == 'k' || key == 'K') && !i_pressed) 
+	else if ((key == 'k' || key == 'K')) 
 	{
-		revertSpeed();
-		speed = speedEffect;
-		k_pressed = true;
-		clearTimeout(previousSpeedTimeout);
-		previousSpeedTimeout = setTimeout(revertSpeed, effectDuration);
+		revertColor();
+		color_red = true;
+
+		if (inverse_direction)
+			setTimeout(revertRed, effectDuration);
+		else
+			speedUp();
 	}
-	else if ((key == 'l' || key == 'L') && !i_pressed) 
+	else if ((key == 'l' || key == 'L')) 
 	{
-		revertSpeed();
-		speed = speedEffect;
-		l_pressed = true;
-		clearTimeout(previousSpeedTimeout);
-		previousSpeedTimeout = setTimeout(revertSpeed, effectDuration);
+		revertColor();
+		color_blue = true;
+
+		if (inverse_direction)
+			setTimeout(revertBlue, effectDuration);
+		else
+			speedUp();
 	}
 	else if (key == 'q' || key == 'Q') 
 	{
 		glitches(40);
-		
 	}
-	else if ((key == 'w' || key == 'W') && !w_pressed && !e_pressed) 
+	else if ((key == 'w' || key == 'W') && !medium_stroke && !large_stroke) 
 	{
-		w_pressed = true;
+		medium_stroke = true;
 		strokeGrow(40);
 	}
-	else if (key == 'e' || key == 'E' && !e_pressed && !w_pressed) 
+	else if ((key == 'e' || key == 'E') && !large_stroke && !medium_stroke) 
 	{
-		e_pressed = true;
+		large_stroke = true;
 		strokeGrow(60);
 	}
-	else if ((key == 'r' || key == 'R') && !r_pressed && !t_pressed) 
+	else if ((key == 'r' || key == 'R') && !short_trail && !long_trail) 
 	{
-		r_pressed = true;
+		short_trail = true;
 		setTimeout(revertR, effectDuration * 5);
 	}
-	else if ((key == 't' || key == 'T') && !t_pressed && !r_pressed)
+	else if ((key == 't' || key == 'T') && !long_trail && !short_trail)
 	{
-		t_pressed = true;
+		long_trail = true;
 		setTimeout(revertT, effectDuration * 10);
 	}
-	else if ((key == 'y' || key == 'Y') && !y_pressed)
+	else if ((key == 'y' || key == 'Y') && !warp_direction)
 	{
-	 	y_pressed = true;
+	 	warp_direction = true;
 		setTimeout(revertY, effectDuration * 3);
 	}
-	else if ((key == 'u' || key == 'U') && !u_pressed)
+	else if ((key == 'u' || key == 'U'))
 	{
-		u_pressed = true;
+		revertDirection();
+		diagonal_direction = true;
 		setTimeout(revertU, effectDuration);
 	}
-	else if ((key == 'i' || key == 'I') && !i_pressed)
+	else if ((key == 'i' || key == 'I') && !inverse_direction)
 	{
 		revertSpeed();
 		clearTimeout(previousSpeedTimeout);
-		i_pressed = true;
+		inverse_direction = true;
 		slowDown(41);
 	}
-	else if ((key == 'o' || key == 'O') && !o_pressed && !p_pressed)
+	else if ((key == 'o' || key == 'O'))
 	{
-		o_pressed = true;
+		revertDirection();
+		circle_direction = true;
 	 	setTimeout(revertO, effectDuration * 2);
 	}
-	else if ((key == 'p' || key == 'P') && !p_pressed) 
+	else if ((key == 'p' || key == 'P')) 
 	{
-		p_pressed = true;
+		revertDirection();
+		sunshine_direction = true;
 		setTimeout(revertP, 9000);
 	}
 	if (key == ' ')
 	{
-		revertAll();
+		pause_particles = !pause_particles;
 	}
 }
 
@@ -328,6 +345,15 @@ function glitches(number)
 		noiseSeed(random(0, 10));
 		setTimeout(() => glitches(number - 1), 30);
 	}
+}
+
+function speedUp()
+{
+	revertSpeed();
+	speed = speedEffect;
+	speed_up = true;
+	clearTimeout(previousSpeedTimeout);
+	previousSpeedTimeout = setTimeout(revertSpeed, effectDuration);
 }
 
 function slowDown(number)
@@ -358,12 +384,12 @@ function strokeGrow(number)
 		strokeWeightEffect += 0.5;
 		setTimeout(() => strokeGrow(number - 1), 30);
 	}
-	else if (number > 0 && w_pressed)
+	else if (number > 0 && medium_stroke)
 	{
 		strokeWeightEffect -= 0.5;
 		setTimeout(() => strokeGrow(number - 1), 30);
 	}
-	else if (number > 0 && e_pressed)
+	else if (number > 0 && large_stroke)
 	{
 		strokeWeightEffect -= 0.20;
 		setTimeout(() => strokeGrow(number - 0.2), 60);
@@ -392,65 +418,97 @@ function revertAll()
 	revertW();
 }
 
+function revertColor()
+{
+	color_white = false;
+	color_green = false;
+	color_red = false;
+	color_blue = false;
+}
+
+function revertDirection()
+{
+	diagonal_direction = false;
+	warp_direction = false;
+	circle_direction = false;
+	sunshine_direction = false;
+}
+
 function revertSpeed()
 {
 	if (speed == speedEffect)
 		speed = speedDefault;
-	h_pressed = false;
-	j_pressed = false;
-	k_pressed = false;
-	l_pressed = false;
 }
 
 function revertE()
 {
-	e_pressed = false;
+	large_stroke = false;
 	strokeWeightEffect = strokeWeightDefault;
 }
 
 function revertG()
 {
-	g_pressed = false;
+	random_background = false;
+}
+
+function revertH()
+{
+	h_pressed = false;
 }
 
 function revertI()
 {
-	i_pressed = false;
+	inverse_direction = false;
 	speed = speedDefault;
 }
 
-function revertP()
+function revertWhite()
 {
-	p_pressed = false;
+	color_white = false;
+}
+
+function revertGreen()
+{
+	color_green = false;
+}
+
+function revertRed()
+{
+	color_red = false;
+}
+
+function revertBlue()
+{
+	color_blue = false;
 }
 
 function revertO()
 {
-	o_pressed = false;
+	circle_direction = false;
 }
 
 function revertR()
 {
-	r_pressed = false;
+	short_trail = false;
 }
 
 function revertT()
 {
-	t_pressed = false;
+	long_trail = false;
 }
 
 function revertU()
 {
-	u_pressed = false;
+	diagonal_direction = false;
 }
 
 function revertY()
 {
-	y_pressed = false;
+	warp_direction = false;
 }
 
 function revertW()
 {
-	w_pressed = false;
+	medium_stroke = false;
 	strokeWeightEffect = strokeWeightDefault;
 }
