@@ -35,21 +35,26 @@ let		warp_direction = false;
 let		diagonal_direction = false;
 let		sunshine_direction = false;
 let		circle_direction = false;
+let 	collide_with_curl = false;
 
 let 	color_blue = false;
 let 	color_red = false;
 let 	color_green = false;
 let 	color_white = false;
 
+let		curl_effect = false;
 
 let		screen_center;
+
+let 	curl_position;
+let 	curl_radius = 200;
 
 // INITIAL CANVAS SETUP
 function setup()
 {
 	const canvas = createCanvas(window.innerWidth, window.innerHeight);
 	canvas.parent("canvas_location");
-
+	
 	for (let i = 0; i < number_of_particles; i++) 
 		particles.push(createVector(random(width), random(height)));
 
@@ -67,18 +72,21 @@ function setup()
 // DRAWING THE FLOW FIELD
 function draw()
 {
-	fill_background();
+	FillBackground();
 
 	for (let i = 0; i < number_of_particles; i++) 
 	{
 		let particle = particles[i];
 		
-		get_stroke_color(i);
-		get_stroke_weight();
+		GetStrokeColor(i);
+		GetStrokeWeight();
 		point(particle.x, particle.y);
-		get_particle_direction(particle);
-		update_particle_position(particle);
-		if (!particle_is_on_screen(particle)) 
+		if (curl_effect)
+			collide_with_curl = CollideWithCurl(particle);
+		GetParticleDirection(particle);
+		UpdateParticlePosition(particle);
+
+		if (!ParticleIsOnScreen(particle) || TooCloseToCurl(particle)) 
 		{
 			particle.x = random(width);
 			particle.y = random(height);
@@ -86,7 +94,7 @@ function draw()
 	}
 }
 
-function fill_background()
+function FillBackground()
 {
 	if (short_trail || long_trail)
 		background(black, 0);
@@ -98,7 +106,7 @@ function fill_background()
 		background(black, 10);
 }
 
-function get_stroke_color(i)
+function GetStrokeColor(i)
 {
 	if (color_white)
 		stroke(white);
@@ -109,10 +117,10 @@ function get_stroke_color(i)
 	else if (color_blue)
 		stroke(blue);
 	else
-		stroke(select_default_color(i));
+		stroke(SelectDefaultColor(i));
 }
 
-function select_default_color(i)
+function SelectDefaultColor(i)
 {
 	let range = number_of_particles / 4;
 
@@ -126,7 +134,7 @@ function select_default_color(i)
         return blue;
 }
 
-function get_stroke_weight()
+function GetStrokeWeight()
 {
 	if (medium_stroke || large_stroke)
 		strokeWeight(strokeWeightEffect);
@@ -134,9 +142,15 @@ function get_stroke_weight()
 		strokeWeight(strokeWeightDefault);
 }
 
-function get_particle_direction(particle)
+
+function GetParticleDirection(particle)
 {
-	if (mouseIsPressed)
+	if (collide_with_curl)
+	{
+		let angleToCurl = atan2(curl_position.y - particle.y, curl_position.x - particle.x);
+		direction = angleToCurl + 0.8;
+	}
+	else if (mouseIsPressed)
 	{
 		direction = atan2(mouseY - particle.y, mouseX - particle.x);
 	}
@@ -159,20 +173,20 @@ function get_particle_direction(particle)
 			noiseScale = noiseScaleEffect;
 		else
 			noiseScale = noiseScaleDefault;
-		let noise_value = noise(particle.x * noiseScale, particle.y * noiseScale, frameCount * noiseScale * noiseScale);
-		direction = TAU * noise_value;
-	}
+			let noise_value = noise(particle.x * noiseScale, particle.y * noiseScale, frameCount * noiseScale * noiseScale);
+			direction = TAU * noise_value;
+	}	
 }
 
-function update_particle_position(particle)
-{
-	if (sunshine_direction && !mouseIsPressed)
+function UpdateParticlePosition(particle)
+{	
+	if (sunshine_direction && !mouseIsPressed && !collide_with_curl)
 	{
 		particle.add(p5.Vector.mult(direction, speed));
 	}
-	else if (circle_direction && !mouseIsPressed)
+	else if (circle_direction && !mouseIsPressed && !collide_with_curl)
 	{
-    	let radius = dist(particle.x, particle.y, screen_center.x, screen_center.y);
+		let radius = dist(particle.x, particle.y, screen_center.x, screen_center.y);
 		particle.x = screen_center.x + radius * cos(direction);
     	particle.y = screen_center.y + radius * sin(direction);
 	}
@@ -183,12 +197,26 @@ function update_particle_position(particle)
 	}
 }
 
-function particle_is_on_screen(particle)
+function CollideWithCurl(particle) 
+{
+	let distance = particle.dist(curl_position);
+	return (distance < curl_radius);
+}
+
+function ParticleIsOnScreen(particle)
 {
 	if (particle.x >= 0 && particle.x <= width && particle.y >= 0 && particle.y <= height)
 		return (true);
 	else
 		return (false);
+}
+
+function TooCloseToCurl(particle)
+{
+	if (!curl_effect)
+		return false;
+	let distance = particle.dist(curl_position);
+	return (distance < 5);
 }
 
 // VISUAL EFFECTS TRIGGERED BY KEY PRESSES
@@ -197,7 +225,9 @@ function keyPressed()
 {
 	if (key == 'z' || key == 'Z') 
 	{
-	//	do something
+		curl_position = createVector(random(width), random(height));
+		curl_effect = true;
+		setTimeout(RevertCurl, effectDuration * 5);
 	}
 	else if (key == 'x' || key == 'X') 
 	{
@@ -245,163 +275,168 @@ function keyPressed()
 	}
 	else if ((key == 'h' || key == 'H')) 
 	{
-		revertColor();
+		RevertColor();
 		color_white = true;
 
 		if (!inverse_direction)
-			speedUp();
-		setTimeout(revertWhite, effectDuration);
+			SpeedUp();
+		setTimeout(RevertWhite, effectDuration);
 	}
 	else if ((key == 'j' || key == 'J')) 
 	{
-		revertColor();
+		RevertColor();
 		color_green = true;
 
 		if (!inverse_direction)
-			speedUp();
-		setTimeout(revertGreen, effectDuration);
+			SpeedUp();
+		setTimeout(RevertGreen, effectDuration);
 	}
 	else if ((key == 'k' || key == 'K')) 
 	{
-		revertColor();
+		RevertColor();
 		color_red = true;
 
 		if (!inverse_direction)
-			speedUp();
-		setTimeout(revertRed, effectDuration);
+			SpeedUp();
+		setTimeout(RevertRed, effectDuration);
 	}
 	else if ((key == 'l' || key == 'L')) 
 	{
-		revertColor();
+		RevertColor();
 		color_blue = true;
 
 		if (!inverse_direction)
-			speedUp();
-		setTimeout(revertBlue, effectDuration);
+			SpeedUp();
+		setTimeout(RevertBlue, effectDuration);
 	}
 	else if (key == 'q' || key == 'Q') 
 	{
-		glitches(40);
+		Glitches(40);
 	}
 	else if ((key == 'w' || key == 'W') && !medium_stroke && !large_stroke) 
 	{
 		medium_stroke = true;
-		strokeGrow(40);
+		StrokeGrow(40);
 	}
 	else if ((key == 'e' || key == 'E') && !large_stroke && !medium_stroke) 
 	{
 		large_stroke = true;
-		strokeGrow(60);
+		StrokeGrow(60);
 	}
 	else if ((key == 'r' || key == 'R') && !short_trail && !long_trail) 
 	{
 		short_trail = true;
-		setTimeout(revertShortTrail, effectDuration * 5);
+		setTimeout(RevertShortTrail, effectDuration * 5);
 	}
 	else if ((key == 't' || key == 'T') && !long_trail && !short_trail)
 	{
 		long_trail = true;
-		setTimeout(revertLongTrail, effectDuration * 10);
+		setTimeout(RevertLongTrail, effectDuration * 10);
 	}
 	else if ((key == 'y' || key == 'Y') && !warp_direction)
 	{
 	 	warp_direction = true;
-		setTimeout(revertWarpDirection, effectDuration * 3);
+		setTimeout(RevertWarpDirection, effectDuration * 3);
 	}
 	else if ((key == 'u' || key == 'U'))
 	{
-		revertDirection();
+		RevertDirection();
 		diagonal_direction = true;
-		setTimeout(revertDiagonalDirection, effectDuration);
+		setTimeout(RevertDiagonalDirection, effectDuration);
 	}
 	else if ((key == 'i' || key == 'I') && !inverse_direction)
 	{
-		revertSpeed();
+		RevertSpeed();
 		clearTimeout(previousSpeedTimeout);
 		inverse_direction = true;
-		slowDown(41);
+		SlowDown(41);
 	}
 	else if ((key == 'o' || key == 'O'))
 	{
-		revertDirection();
+		RevertDirection();
 		circle_direction = true;
-	 	setTimeout(revertCircleDirection, effectDuration * 2);
+	 	setTimeout(RevertCircleDirection, effectDuration * 2);
 	}
 	else if ((key == 'p' || key == 'P')) 
 	{
-		revertDirection();
+		RevertDirection();
 		sunshine_direction = true;
-		setTimeout(revertSunshineDirection, 9000);
+		setTimeout(RevertSunshineDirection, 9000);
 	}
 }
 
 // EFFECT FUNCTIONS
-function glitches(number)
+function Glitches(number)
 {
 	if (number > 0)
 	{
 		noiseSeed(random(0, 10));
-		setTimeout(() => glitches(number - 1), 30);
+		setTimeout(() => Glitches(number - 1), 30);
 	}
 }
 
-function speedUp()
+function SpeedUp()
 {
-	revertSpeed();
+	RevertSpeed();
 	speed = speedEffect;
 	speed_up = true;
 	clearTimeout(previousSpeedTimeout);
-	previousSpeedTimeout = setTimeout(revertSpeed, effectDuration);
+	previousSpeedTimeout = setTimeout(RevertSpeed, effectDuration);
 }
 
-function slowDown(number)
+function SlowDown(number)
 {
 	if (number > 35)
 	{
 		speed += 0.3;
-		setTimeout(() => slowDown(number - 1), 50);
+		setTimeout(() => SlowDown(number - 1), 50);
 	}
 	else if (number > 1)
 	{
 		speed -= 0.2;
-		setTimeout(() => slowDown(number - 1), 50);
+		setTimeout(() => SlowDown(number - 1), 50);
 	}
 	else if (number == 1)
 	{
 		speed -= 0.2;
-		setTimeout(() => slowDown(number - 1), 5000);
+		setTimeout(() => SlowDown(number - 1), 5000);
 	}
 	else if (number == 0)
-		revertInverseDirection();
+		RevertInverseDirection();
 }
 
-function strokeGrow(number)
+function StrokeGrow(number)
 {
 	if (number > 20)
 	{
 		strokeWeightEffect += 0.5;
-		setTimeout(() => strokeGrow(number - 1), 30);
+		setTimeout(() => StrokeGrow(number - 1), 30);
 	}
 	else if (number > 0 && medium_stroke)
 	{
 		strokeWeightEffect -= 0.5;
-		setTimeout(() => strokeGrow(number - 1), 30);
+		setTimeout(() => StrokeGrow(number - 1), 30);
 	}
 	else if (number > 0 && large_stroke)
 	{
 		strokeWeightEffect -= 0.20;
-		setTimeout(() => strokeGrow(number - 0.2), 60);
+		setTimeout(() => StrokeGrow(number - 0.2), 60);
 	}
 	else if (number <= 0)
 	{
-		revertMediumStroke();
-		revertLargeStroke();
+		RevertMediumStroke();
+		RevertLargeStroke();
 	}
 }
 
 // RESET EFFECT FUNCTIONS
 
-function revertColor()
+function RevertCurl()
+{
+	curl_effect = false;
+}
+
+function RevertColor()
 {
 	color_white = false;
 	color_green = false;
@@ -409,12 +444,12 @@ function revertColor()
 	color_blue = false;
 }
 
-function revertSunshineDirection()
+function RevertSunshineDirection()
 {
 	sunshine_direction = false;
 }
 
-function revertDirection()
+function RevertDirection()
 {
 	diagonal_direction = false;
 	warp_direction = false;
@@ -422,70 +457,70 @@ function revertDirection()
 	sunshine_direction = false;
 }
 
-function revertSpeed()
+function RevertSpeed()
 {
 	if (speed == speedEffect)
 		speed = speedDefault;
 }
 
-function revertLargeStroke()
+function RevertLargeStroke()
 {
 	large_stroke = false;
 	strokeWeightEffect = strokeWeightDefault;
 }
 
-function revertInverseDirection()
+function RevertInverseDirection()
 {
 	inverse_direction = false;
 	speed = speedDefault;
 }
 
-function revertWhite()
+function RevertWhite()
 {
 	color_white = false;
 }
 
-function revertGreen()
+function RevertGreen()
 {
 	color_green = false;
 }
 
-function revertRed()
+function RevertRed()
 {
 	color_red = false;
 }
 
-function revertBlue()
+function RevertBlue()
 {
 	color_blue = false;
 }
 
-function revertCircleDirection()
+function RevertCircleDirection()
 {
 	circle_direction = false;
 }
 
-function revertShortTrail()
+function RevertShortTrail()
 {
 	short_trail = false;
 }
 
-function revertLongTrail()
+function RevertLongTrail()
 {
 	long_trail = false;
 }
 
-function revertDiagonalDirection()
+function RevertDiagonalDirection()
 {
 	diagonal_direction = false;
 }
 
-function revertWarpDirection()
+function RevertWarpDirection()
 {
 	warp_direction = false;
 }
 
-function revertMediumStroke()
+function RevertMediumStroke()
 {
 	medium_stroke = false;
 	strokeWeightEffect = strokeWeightDefault;
