@@ -2,42 +2,45 @@
 let		particles = [];
 const	number_of_particles = 3000;
 
+let		white;
+let		green;
+let		red;
+let		blue;
+let		black;
+
 let		noiseScale;
 let		noiseScaleDefault = 0.007;
 let		noiseScaleEffect = 0.0009;
-let 	direction;
-let		directionEffect = 4;
+
 let		speed;
 let		speedDefault = 1.2;
 let		speedEffect = 2;
+
+let 	previousSpeedTimeout;
+let		previousStrokeTimeout
+let 	effectDuration = 3000;
+
 let		strokeWeightDefault = 1;
 let		strokeWeightEffect = 1;
-
-let		color1;
-let		color2;
-let		color3;
-let		color4;
-let		color5;
-
-let		inverse_direction = false;
 let		medium_stroke = false;
 let		large_stroke = false;
-let		random_background = false;
+
 let		short_trail = false;
 let		long_trail = false;
+
+let 	direction;
+let		directionEffect = 4;
+let		inverse_direction = false;
 let		warp_direction = false;
 let		diagonal_direction = false;
 let		sunshine_direction = false;
 let		circle_direction = false;
-let		pause_particles = false;
+
 let 	color_blue = false;
 let 	color_red = false;
 let 	color_green = false;
 let 	color_white = false;
 
-let 	previousSpeedTimeout;
-let		previousStrokeTimeout
-let 	effectDuration = 3000;
 
 let		screen_center;
 
@@ -45,16 +48,17 @@ let		screen_center;
 function setup()
 {
 	const canvas = createCanvas(window.innerWidth, window.innerHeight);
-
 	canvas.parent("canvas_location");
-	for(let i = 0; i < number_of_particles; i++) 
+
+	for (let i = 0; i < number_of_particles; i++) 
 		particles.push(createVector(random(width), random(height)));
+
 	strokeWeight(strokeWeightDefault);
-	color1 = 255;
-	color2 = color(173, 255, 47);
-	color3 = color(248, 51, 60); 
-	color4 = color(43, 158, 179);
-	color5 = color(228, 208, 10);
+	white = 255;
+	black = 0;
+	green = color(173, 255, 47);
+	red = color(248, 51, 60); 
+	blue = color(43, 158, 179);
 	screen_center = createVector(width / 2, height / 2);
 	speed = speedDefault;
 	clear();
@@ -63,24 +67,21 @@ function setup()
 // DRAWING THE FLOW FIELD
 function draw()
 {
-	if (!pause_particles)
+	fill_background();
+
+	for (let i = 0; i < number_of_particles; i++) 
 	{
-		fill_background();
-	
-		for(let i = 0; i < number_of_particles; i++) 
+		let particle = particles[i];
+		
+		get_stroke_color(i);
+		get_stroke_weight();
+		point(particle.x, particle.y);
+		get_particle_direction(particle);
+		update_particle_position(particle);
+		if (!particle_is_on_screen(particle)) 
 		{
-			let particle = particles[i];
-			
-			get_stroke_color(i);
-			get_stroke_weight();
-			point(particle.x, particle.y);
-			get_particle_direction(particle);
-			update_particle_position(particle);
-			if(!particle_is_on_screen(particle)) 
-			{
-				particle.x = random(width);
-				particle.y = random(height);
-			}
+			particle.x = random(width);
+			particle.y = random(height);
 		}
 	}
 }
@@ -88,25 +89,25 @@ function draw()
 function fill_background()
 {
 	if (short_trail || long_trail)
-		background(0, 0);
-	else if (sunshine_direction)
-		background(0, 5);
+		background(black, 0);
+	else if (sunshine_direction || mouseIsPressed)
+		background(black, 5);
 	else if (inverse_direction)
-		background(0, 7)
+		background(black, 7)
 	else
-		background(0, 10);
+		background(black, 10);
 }
 
 function get_stroke_color(i)
 {
 	if (color_white)
-		stroke(color1);
+		stroke(white);
 	else if (color_green)
-		stroke(color2);
+		stroke(green);
 	else if (color_red)
-		stroke(color3);
+		stroke(red);
 	else if (color_blue)
-		stroke(color4);
+		stroke(blue);
 	else
 		stroke(select_default_color(i));
 }
@@ -116,13 +117,13 @@ function select_default_color(i)
 	let range = number_of_particles / 4;
 
     if (i < range)
-        return color1;
+        return white;
     else if (i < 2 * range)
-        return color2;
+        return green;
     else if (i < 3 * range)
-        return color3;
+        return red;
     else
-        return color4;
+        return blue;
 }
 
 function get_stroke_weight()
@@ -135,7 +136,11 @@ function get_stroke_weight()
 
 function get_particle_direction(particle)
 {
-	if (diagonal_direction)
+	if (mouseIsPressed)
+	{
+		direction = atan2(mouseY - particle.y, mouseX - particle.x);
+	}
+	else if (diagonal_direction)
 	{
 		direction = directionEffect;
 	}
@@ -161,11 +166,11 @@ function get_particle_direction(particle)
 
 function update_particle_position(particle)
 {
-	if (sunshine_direction)
+	if (sunshine_direction && !mouseIsPressed)
 	{
 		particle.add(p5.Vector.mult(direction, speed));
 	}
-	else if (circle_direction)
+	else if (circle_direction && !mouseIsPressed)
 	{
     	let radius = dist(particle.x, particle.y, screen_center.x, screen_center.y);
 		particle.x = screen_center.x + radius * cos(direction);
@@ -187,6 +192,7 @@ function particle_is_on_screen(particle)
 }
 
 // VISUAL EFFECTS TRIGGERED BY KEY PRESSES
+
 function keyPressed() 
 {
 	if (key == 'z' || key == 'Z') 
@@ -219,19 +225,19 @@ function keyPressed()
 	}
 	else if (key == 'a' || key == 'A') 
 	{
-		background(color1);
+		background(white);
 	}
 	else if (key == 's' || key == 'S') 
 	{
-		background(color2);
+		background(green);
 	}
 	else if (key == 'd' || key == 'D') 
 	{
-		background(color3);
+		background(red);
 	}
 	else if (key == 'f' || key == 'F') 
 	{
-	 	background(color4);
+	 	background(blue);
 	}
 	else if (key == 'g' || key == 'G') 
 	{
@@ -242,40 +248,36 @@ function keyPressed()
 		revertColor();
 		color_white = true;
 
-		if (inverse_direction)
-			setTimeout(revertWhite, effectDuration);
-		else
+		if (!inverse_direction)
 			speedUp();
+		setTimeout(revertWhite, effectDuration);
 	}
 	else if ((key == 'j' || key == 'J')) 
 	{
 		revertColor();
 		color_green = true;
 
-		if (inverse_direction)
-			setTimeout(revertGreen, effectDuration);
-		else
+		if (!inverse_direction)
 			speedUp();
+		setTimeout(revertGreen, effectDuration);
 	}
 	else if ((key == 'k' || key == 'K')) 
 	{
 		revertColor();
 		color_red = true;
 
-		if (inverse_direction)
-			setTimeout(revertRed, effectDuration);
-		else
+		if (!inverse_direction)
 			speedUp();
+		setTimeout(revertRed, effectDuration);
 	}
 	else if ((key == 'l' || key == 'L')) 
 	{
 		revertColor();
 		color_blue = true;
 
-		if (inverse_direction)
-			setTimeout(revertBlue, effectDuration);
-		else
+		if (!inverse_direction)
 			speedUp();
+		setTimeout(revertBlue, effectDuration);
 	}
 	else if (key == 'q' || key == 'Q') 
 	{
@@ -294,23 +296,23 @@ function keyPressed()
 	else if ((key == 'r' || key == 'R') && !short_trail && !long_trail) 
 	{
 		short_trail = true;
-		setTimeout(revertR, effectDuration * 5);
+		setTimeout(revertShortTrail, effectDuration * 5);
 	}
 	else if ((key == 't' || key == 'T') && !long_trail && !short_trail)
 	{
 		long_trail = true;
-		setTimeout(revertT, effectDuration * 10);
+		setTimeout(revertLongTrail, effectDuration * 10);
 	}
 	else if ((key == 'y' || key == 'Y') && !warp_direction)
 	{
 	 	warp_direction = true;
-		setTimeout(revertY, effectDuration * 3);
+		setTimeout(revertWarpDirection, effectDuration * 3);
 	}
 	else if ((key == 'u' || key == 'U'))
 	{
 		revertDirection();
 		diagonal_direction = true;
-		setTimeout(revertU, effectDuration);
+		setTimeout(revertDiagonalDirection, effectDuration);
 	}
 	else if ((key == 'i' || key == 'I') && !inverse_direction)
 	{
@@ -323,17 +325,13 @@ function keyPressed()
 	{
 		revertDirection();
 		circle_direction = true;
-	 	setTimeout(revertO, effectDuration * 2);
+	 	setTimeout(revertCircleDirection, effectDuration * 2);
 	}
 	else if ((key == 'p' || key == 'P')) 
 	{
 		revertDirection();
 		sunshine_direction = true;
-		setTimeout(revertP, 9000);
-	}
-	if (key == ' ')
-	{
-		pause_particles = !pause_particles;
+		setTimeout(revertSunshineDirection, 9000);
 	}
 }
 
@@ -374,7 +372,7 @@ function slowDown(number)
 		setTimeout(() => slowDown(number - 1), 5000);
 	}
 	else if (number == 0)
-		revertI();
+		revertInverseDirection();
 }
 
 function strokeGrow(number)
@@ -396,27 +394,12 @@ function strokeGrow(number)
 	}
 	else if (number <= 0)
 	{
-		revertW();
-		revertE();
+		revertMediumStroke();
+		revertLargeStroke();
 	}
 }
 
-
 // RESET EFFECT FUNCTIONS
-
-function revertAll()
-{
-	revertSpeed();
-	revertE();
-	revertG();
-	revertI();
-	revertO();
-	revertP();
-	revertR();
-	revertT();
-	revertU();
-	revertW();
-}
 
 function revertColor()
 {
@@ -424,6 +407,11 @@ function revertColor()
 	color_green = false;
 	color_red = false;
 	color_blue = false;
+}
+
+function revertSunshineDirection()
+{
+	sunshine_direction = false;
 }
 
 function revertDirection()
@@ -440,23 +428,13 @@ function revertSpeed()
 		speed = speedDefault;
 }
 
-function revertE()
+function revertLargeStroke()
 {
 	large_stroke = false;
 	strokeWeightEffect = strokeWeightDefault;
 }
 
-function revertG()
-{
-	random_background = false;
-}
-
-function revertH()
-{
-	h_pressed = false;
-}
-
-function revertI()
+function revertInverseDirection()
 {
 	inverse_direction = false;
 	speed = speedDefault;
@@ -482,32 +460,32 @@ function revertBlue()
 	color_blue = false;
 }
 
-function revertO()
+function revertCircleDirection()
 {
 	circle_direction = false;
 }
 
-function revertR()
+function revertShortTrail()
 {
 	short_trail = false;
 }
 
-function revertT()
+function revertLongTrail()
 {
 	long_trail = false;
 }
 
-function revertU()
+function revertDiagonalDirection()
 {
 	diagonal_direction = false;
 }
 
-function revertY()
+function revertWarpDirection()
 {
 	warp_direction = false;
 }
 
-function revertW()
+function revertMediumStroke()
 {
 	medium_stroke = false;
 	strokeWeightEffect = strokeWeightDefault;
