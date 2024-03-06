@@ -16,8 +16,10 @@ let		speed;
 let		speedDefault = 1.2;
 let		speedEffect = 2;
 
-let 	previousSpeedTimeout;
-let		previousStrokeTimeout
+let 	previous_speed_timeout = null;
+let		previous_stroke_timeout = null;
+let 	previous_color_timeout = null;
+let 	previous_curl_timeout = null;
 let 	effectDuration = 3000;
 
 let		strokeWeightDefault = 1;
@@ -48,6 +50,8 @@ let		screen_center;
 
 let 	curl_position;
 let 	curl_radius = 200;
+
+
 
 // INITIAL CANVAS SETUP
 function setup()
@@ -86,7 +90,7 @@ function draw()
 		GetParticleDirection(particle);
 		UpdateParticlePosition(particle);
 
-		if (!ParticleIsOnScreen(particle) || TooCloseToCurl(particle)) 
+		if (!ParticleIsOnScreen(particle) || TooCloseToCurl(particle) || TooCloseToCursor(particle)) 
 		{
 			particle.x = random(width);
 			particle.y = random(height);
@@ -141,7 +145,6 @@ function GetStrokeWeight()
 	else
 		strokeWeight(strokeWeightDefault);
 }
-
 
 function GetParticleDirection(particle)
 {
@@ -216,7 +219,15 @@ function TooCloseToCurl(particle)
 	if (!curl_effect)
 		return false;
 	let distance = particle.dist(curl_position);
-	return (distance < 5);
+	return (distance < 3);
+}
+
+function TooCloseToCursor(particle)
+{
+	if (!mouseIsPressed)
+		return false;
+	let distance = particle.dist(createVector(mouseX, mouseY));
+	return (distance < 3);
 }
 
 // VISUAL EFFECTS TRIGGERED BY KEY PRESSES
@@ -225,9 +236,14 @@ function keyPressed()
 {
 	if (key == 'z' || key == 'Z') 
 	{
+		if (previous_curl_timeout)
+		{
+			RevertCurl();
+			clearTimeout(previous_curl_timeout);
+		}
 		curl_position = createVector(random(width), random(height));
 		curl_effect = true;
-		setTimeout(RevertCurl, effectDuration * 5);
+		previous_curl_timeout = setTimeout(RevertCurl, effectDuration * 5);
 	}
 	else if (key == 'x' || key == 'X') 
 	{
@@ -275,39 +291,55 @@ function keyPressed()
 	}
 	else if ((key == 'h' || key == 'H')) 
 	{
-		RevertColor();
+		if (previous_color_timeout)
+		{
+			clearTimeout(previous_color_timeout);
+			RevertColor();
+		}
 		color_white = true;
 
 		if (!inverse_direction)
 			SpeedUp();
-		setTimeout(RevertWhite, effectDuration);
+		previous_color_timeout = setTimeout(RevertWhite, effectDuration);
 	}
 	else if ((key == 'j' || key == 'J')) 
 	{
-		RevertColor();
+		if (previous_color_timeout)
+		{
+			clearTimeout(previous_color_timeout);
+			RevertColor();
+		}
 		color_green = true;
 
 		if (!inverse_direction)
 			SpeedUp();
-		setTimeout(RevertGreen, effectDuration);
+		previous_color_timeout = setTimeout(RevertGreen, effectDuration);
 	}
 	else if ((key == 'k' || key == 'K')) 
 	{
-		RevertColor();
+		if (previous_color_timeout)
+		{
+			clearTimeout(previous_color_timeout);
+			RevertColor();
+		}
 		color_red = true;
 
 		if (!inverse_direction)
 			SpeedUp();
-		setTimeout(RevertRed, effectDuration);
+		previous_color_timeout = setTimeout(RevertRed, effectDuration);
 	}
 	else if ((key == 'l' || key == 'L')) 
 	{
-		RevertColor();
+		if (previous_color_timeout)
+		{
+			clearTimeout(previous_color_timeout);
+			RevertColor();
+		}
 		color_blue = true;
 
 		if (!inverse_direction)
 			SpeedUp();
-		setTimeout(RevertBlue, effectDuration);
+		previous_color_timeout = setTimeout(RevertBlue, effectDuration);
 	}
 	else if (key == 'q' || key == 'Q') 
 	{
@@ -338,7 +370,7 @@ function keyPressed()
 	 	warp_direction = true;
 		setTimeout(RevertWarpDirection, effectDuration * 3);
 	}
-	else if ((key == 'u' || key == 'U'))
+	else if ((key == 'u' || key == 'U') && !diagonal_direction)
 	{
 		RevertDirection();
 		diagonal_direction = true;
@@ -347,17 +379,17 @@ function keyPressed()
 	else if ((key == 'i' || key == 'I') && !inverse_direction)
 	{
 		RevertSpeed();
-		clearTimeout(previousSpeedTimeout);
+		clearTimeout(previous_speed_timeout);
 		inverse_direction = true;
 		SlowDown(41);
 	}
-	else if ((key == 'o' || key == 'O'))
+	else if ((key == 'o' || key == 'O') && !circle_direction)
 	{
 		RevertDirection();
 		circle_direction = true;
 	 	setTimeout(RevertCircleDirection, effectDuration * 2);
 	}
-	else if ((key == 'p' || key == 'P')) 
+	else if ((key == 'p' || key == 'P') && !sunshine_direction) 
 	{
 		RevertDirection();
 		sunshine_direction = true;
@@ -380,8 +412,8 @@ function SpeedUp()
 	RevertSpeed();
 	speed = speedEffect;
 	speed_up = true;
-	clearTimeout(previousSpeedTimeout);
-	previousSpeedTimeout = setTimeout(RevertSpeed, effectDuration);
+	clearTimeout(previous_speed_timeout);
+	previous_speed_timeout = setTimeout(RevertSpeed, effectDuration);
 }
 
 function SlowDown(number)
