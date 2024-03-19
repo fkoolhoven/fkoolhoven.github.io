@@ -46,12 +46,17 @@ let 	color_white = false;
 
 let		curl_effect = false;
 
+let 	cube_effect = false;
+
+let 	lines_effect = false;
+
+let		circle_canvas = false;
+const 	circle_offset = 50;
+
 let		screen_center;
 
 let 	curl_position;
 let 	curl_radius = 200;
-
-
 
 // INITIAL CANVAS SETUP
 function setup()
@@ -63,6 +68,8 @@ function setup()
 		particles.push(createVector(random(width), random(height)));
 
 	strokeWeight(strokeWeightDefault);
+	windDirection = random(TWO_PI);
+  	windIntensity = 0.5;
 	white = 255;
 	black = 0;
 	green = color(173, 255, 47);
@@ -77,11 +84,16 @@ function setup()
 function draw()
 {
 	FillBackground();
-
 	for (let i = 0; i < number_of_particles; i++) 
 	{
 		let particle = particles[i];
-		
+		if (lines_effect && i % (number_of_particles / 10) == 0)
+		{
+			beginShape();
+			vertex(particles[i].y, particles[i].x);
+			vertex(particles[i + 1].x, particles[i + 1].y);
+			endShape();
+		}
 		GetStrokeColor(i);
 		GetStrokeWeight();
 		point(particle.x, particle.y);
@@ -89,12 +101,24 @@ function draw()
 			collide_with_curl = CollideWithCurl(particle);
 		GetParticleDirection(particle);
 		UpdateParticlePosition(particle);
+		if (!ParticleIsOnScreen(particle) || TooCloseToCurl(particle) || TooCloseToCursor(particle))
+			GenerateRandomPosition(particle); 
+	}
+}
 
-		if (!ParticleIsOnScreen(particle) || TooCloseToCurl(particle) || TooCloseToCursor(particle)) 
-		{
-			particle.x = random(width);
-			particle.y = random(height);
-		}
+function GenerateRandomPosition(particle)
+{
+	if (circle_canvas) 
+	{
+		let angle = random(TWO_PI);
+		let radius = random(min(width, height) / 2 - circle_offset);
+		particle.x = width / 2 + radius * cos(angle);
+		particle.y = height / 2 + radius * sin(angle);
+	} 
+	else 
+	{
+		particle.x = random(width);
+		particle.y = random(height);
 	}
 }
 
@@ -176,8 +200,8 @@ function GetParticleDirection(particle)
 			noiseScale = noiseScaleEffect;
 		else
 			noiseScale = noiseScaleDefault;
-			let noise_value = noise(particle.x * noiseScale, particle.y * noiseScale, frameCount * noiseScale * noiseScale);
-			direction = TAU * noise_value;
+		let noise_value = noise(particle.x * noiseScale, particle.y * noiseScale, frameCount * noiseScale * noiseScale);
+		direction = TAU * noise_value;
 	}	
 }
 
@@ -195,8 +219,19 @@ function UpdateParticlePosition(particle)
 	}
 	else
 	{
+		if (cube_effect)
+		{
+			let windForce = createVector(cos(particle.x / 3), sin(particle.y / 3));
+			windForce.normalize();
+			particle.add(windForce);
+		}
+
+		let speed_temp = speed;
+		if (collide_with_curl)
+			speed = speedEffect;
 		particle.x += cos(direction) * speed;
 		particle.y += sin(direction) * speed;
+		speed = speed_temp;
 	}
 }
 
@@ -208,10 +243,27 @@ function CollideWithCurl(particle)
 
 function ParticleIsOnScreen(particle)
 {
+	if (circle_canvas)
+		return ParticleIsInCircle(particle);
+	else
+		return ParticleIsInSquare(particle);
+}
+
+function ParticleIsInSquare(particle)
+{
 	if (particle.x >= 0 && particle.x <= width && particle.y >= 0 && particle.y <= height)
-		return (true);
+			return (true);
 	else
 		return (false);
+}
+
+function ParticleIsInCircle(particle)
+{
+	let distanceFromCenter = dist(particle.x, particle.y, width / 2, height / 2);
+	if (distanceFromCenter <= min(width, height) / 2 - circle_offset)
+		return true;
+	else
+		return false;
 }
 
 function TooCloseToCurl(particle)
@@ -230,8 +282,24 @@ function TooCloseToCursor(particle)
 	return (distance < 3);
 }
 
-// VISUAL EFFECTS TRIGGERED BY KEY PRESSES
+// UTILITY FUNCTION TO GET CURL POSITION ON THE CANVAS
+function getCurlPosition()
+{
+	if (circle_canvas) 
+	{
+		let angle = Math.random() * Math.PI * 2;
+		let radius = Math.random() * (min(width, height) / 2 - circle_offset);
+		let x = screen_center.x + radius * Math.cos(angle);
+		let y = screen_center.y + radius * Math.sin(angle);
+		return (createVector(x, y));
+	} 
+	else 
+	{
+		return (createVector(random(width), random(height)));
+	}
+}
 
+// VISUAL EFFECTS TRIGGERED BY KEY PRESSES
 function keyPressed() 
 {
 	if (key == 'z' || key == 'Z') 
@@ -241,21 +309,25 @@ function keyPressed()
 			RevertCurl();
 			clearTimeout(previous_curl_timeout);
 		}
-		curl_position = createVector(random(width), random(height));
+
+		curl_position = getCurlPosition();
 		curl_effect = true;
-		previous_curl_timeout = setTimeout(RevertCurl, effectDuration * 5);
+		previous_curl_timeout = setTimeout(() => curl_effect = false, effectDuration * 4);
 	}
 	else if (key == 'x' || key == 'X') 
 	{
-	//   do something
+		circle_canvas = !circle_canvas;
 	}
 	else if (key == 'c' || key == 'C') 
 	{
-	//   do something
+		RevertDirection();
+		cube_effect = true;
+		setTimeout(() => cube_effect = false, effectDuration * 5);
 	}
 	else if (key == 'v' || key == 'V') 
 	{
-	//   do something
+		lines_effect = true;
+		setTimeout(() => lines_effect = false, effectDuration * 3);
 	}
 	else if (key == 'b' || key == 'B') 
 	{
@@ -300,7 +372,7 @@ function keyPressed()
 
 		if (!inverse_direction)
 			SpeedUp();
-		previous_color_timeout = setTimeout(RevertWhite, effectDuration);
+		previous_color_timeout = setTimeout(() => color_white = false, effectDuration);
 	}
 	else if ((key == 'j' || key == 'J')) 
 	{
@@ -313,7 +385,8 @@ function keyPressed()
 
 		if (!inverse_direction)
 			SpeedUp();
-		previous_color_timeout = setTimeout(RevertGreen, effectDuration);
+		
+		previous_color_timeout = setTimeout(() => color_green = false, effectDuration);
 	}
 	else if ((key == 'k' || key == 'K')) 
 	{
@@ -326,7 +399,7 @@ function keyPressed()
 
 		if (!inverse_direction)
 			SpeedUp();
-		previous_color_timeout = setTimeout(RevertRed, effectDuration);
+		previous_color_timeout = setTimeout(() => color_red = false, effectDuration);
 	}
 	else if ((key == 'l' || key == 'L')) 
 	{
@@ -339,7 +412,7 @@ function keyPressed()
 
 		if (!inverse_direction)
 			SpeedUp();
-		previous_color_timeout = setTimeout(RevertBlue, effectDuration);
+		previous_color_timeout = setTimeout(() => color_blue = false, effectDuration);
 	}
 	else if (key == 'q' || key == 'Q') 
 	{
@@ -358,23 +431,24 @@ function keyPressed()
 	else if ((key == 'r' || key == 'R') && !short_trail && !long_trail) 
 	{
 		short_trail = true;
-		setTimeout(RevertShortTrail, effectDuration * 5);
+		setTimeout(() => short_trail = false, effectDuration * 5);
 	}
 	else if ((key == 't' || key == 'T') && !long_trail && !short_trail)
 	{
 		long_trail = true;
-		setTimeout(RevertLongTrail, effectDuration * 10);
+		setTimeout(() => long_trail = false, effectDuration * 10);
 	}
 	else if ((key == 'y' || key == 'Y') && !warp_direction)
 	{
+		RevertDirection();
 	 	warp_direction = true;
-		setTimeout(RevertWarpDirection, effectDuration * 3);
+		setTimeout(() => warp_direction = false, effectDuration * 3);
 	}
 	else if ((key == 'u' || key == 'U') && !diagonal_direction)
 	{
 		RevertDirection();
 		diagonal_direction = true;
-		setTimeout(RevertDiagonalDirection, effectDuration);
+		setTimeout(() => diagonal_direction = false, effectDuration);
 	}
 	else if ((key == 'i' || key == 'I') && !inverse_direction)
 	{
@@ -385,15 +459,15 @@ function keyPressed()
 	}
 	else if ((key == 'o' || key == 'O') && !circle_direction)
 	{
-		RevertDirection();
-		circle_direction = true;
-	 	setTimeout(RevertCircleDirection, effectDuration * 2);
+	 	RevertDirection();
+	 	circle_direction = true;
+		setTimeout(() => circle_direction = false, effectDuration * 2);
 	}
 	else if ((key == 'p' || key == 'P') && !sunshine_direction) 
 	{
 		RevertDirection();
 		sunshine_direction = true;
-		setTimeout(RevertSunshineDirection, 9000);
+		setTimeout(RevertSunshineDirection, effectDuration * 3);
 	}
 }
 
@@ -462,12 +536,6 @@ function StrokeGrow(number)
 }
 
 // RESET EFFECT FUNCTIONS
-
-function RevertCurl()
-{
-	curl_effect = false;
-}
-
 function RevertColor()
 {
 	color_white = false;
@@ -483,6 +551,7 @@ function RevertSunshineDirection()
 
 function RevertDirection()
 {
+	cube_effect = false;
 	diagonal_direction = false;
 	warp_direction = false;
 	circle_direction = false;
@@ -505,51 +574,6 @@ function RevertInverseDirection()
 {
 	inverse_direction = false;
 	speed = speedDefault;
-}
-
-function RevertWhite()
-{
-	color_white = false;
-}
-
-function RevertGreen()
-{
-	color_green = false;
-}
-
-function RevertRed()
-{
-	color_red = false;
-}
-
-function RevertBlue()
-{
-	color_blue = false;
-}
-
-function RevertCircleDirection()
-{
-	circle_direction = false;
-}
-
-function RevertShortTrail()
-{
-	short_trail = false;
-}
-
-function RevertLongTrail()
-{
-	long_trail = false;
-}
-
-function RevertDiagonalDirection()
-{
-	diagonal_direction = false;
-}
-
-function RevertWarpDirection()
-{
-	warp_direction = false;
 }
 
 function RevertMediumStroke()
