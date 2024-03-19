@@ -48,6 +48,7 @@ let		curl_effect = false;
 
 let 	cube_effect = false;
 
+let 	previous_line_timeout = null;
 let 	lines_effect = false;
 
 let		circle_canvas = false;
@@ -326,8 +327,10 @@ function keyPressed()
 	}
 	else if (key == 'v' || key == 'V') 
 	{
+		if (previous_line_timeout)
+			clearTimeout(previous_line_timeout);
 		lines_effect = true;
-		setTimeout(() => lines_effect = false, effectDuration * 3);
+		previous_line_timeout = setTimeout(() => lines_effect = false, effectDuration * 3);
 	}
 	else if (key == 'b' || key == 'B') 
 	{
