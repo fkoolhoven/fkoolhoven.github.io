@@ -21,6 +21,7 @@ let 	previous_color_timeout = null;
 let 	previous_curl_timeout = null;
 let		previous_cube_timeout = null;
 let 	previous_line_timeout = null;
+let		previous_squares_timeout = null;
 const 	effect_duration = 3000;
 
 const	strokeweight_default = 1;
@@ -38,6 +39,7 @@ let		diagonal_direction = false;
 let		sunshine_direction = false;
 let		circle_direction = false;
 let 	collide_with_curl = false;
+let		squares_effect = false;
 
 let 	color_blue = false;
 let 	color_red = false;
@@ -82,12 +84,17 @@ function draw()
 	for (let i = 0; i < number_of_particles; i++) 
 	{
 		let particle = particles[i];
+		let color = GetStrokeColor(i);
 		if (lines_effect && i % (number_of_particles / 20) == 0)
 			DrawLine(i);
-		GetStrokeColor(i);
+		if (squares_effect && i % (number_of_particles / 40) == 0)
+			DrawSquare(particle, color);
+		stroke(color);
 		GetStrokeWeight();
+		strokeCap(SQUARE);
 		if (!lines_effect)
 			point(particle.x, particle.y);
+		particle.prev_x = particle.x;
 		if (curl_effect)
 			collide_with_curl = CollideWithCurl(particle);
 		GetParticleDirection(particle);
@@ -128,15 +135,15 @@ function FillBackground()
 function GetStrokeColor(i)
 {
 	if (color_white)
-		stroke(white);
+		return white;
 	else if (color_green)
-		stroke(green);
+		return green;
 	else if (color_red)
-		stroke(red);
+		return red;
 	else if (color_blue)
-		stroke(blue);
+		return blue;
 	else
-		stroke(SelectDefaultColor(i));
+		return SelectDefaultColor(i);
 }
 
 function SelectDefaultColor(i)
@@ -167,6 +174,12 @@ function DrawLine(i)
 	vertex(particles[i].y, particles[i].x);
 	vertex(particles[i + 1].x, particles[i + 1].y);
 	endShape();
+}
+
+function DrawSquare(particle, color)
+{
+	fill(color);
+	rect(particle.x, particle.y, 20, 20);
 }
 
 function GetParticleDirection(particle)
@@ -217,9 +230,9 @@ function UpdateParticlePosition(particle)
 	{
 		if (cube_effect)
 		{
-			let windForce = createVector(cos(particle.x / 3), sin(particle.y / 3));
-			windForce.normalize();
-			particle.add(windForce);
+			let cube_vector = createVector(cos(particle.x / 3), sin(particle.y / 3));
+			cube_vector.normalize();
+			particle.add(cube_vector);
 		}
 
 		let speed_temp = speed;
@@ -328,7 +341,13 @@ function keyPressed()
 	}
 	else if (key == 'b' || key == 'B') 
 	{
-	//   do something
+		if (previous_squares_timeout)
+		{
+			clearTimeout(previous_squares_timeout);
+			previous_squares_timeout = null;
+		}
+		squares_effect = true;
+		previous_squares_timeout = setTimeout(() => { squares_effect = false; previous_squares_timeout = null; }, effect_duration * 2);
 	}
 	else if (key == 'n' || key == 'N') 
 	{
